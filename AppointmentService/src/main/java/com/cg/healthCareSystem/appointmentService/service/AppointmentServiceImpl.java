@@ -142,28 +142,27 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Override
 	public List<LocalTime> getAvailableSlots(TestCenter testCenter, LocalDateTime time) {
 		List<LocalTime> allSlots = new ArrayList<LocalTime>();
-		allSlots.add(LocalTime.of(9, 00));
-		allSlots.add(LocalTime.of(9, 30));
-		allSlots.add(LocalTime.of(10, 00));
-		allSlots.add(LocalTime.of(10, 30));
-		allSlots.add(LocalTime.of(11, 00));
-		allSlots.add(LocalTime.of(11, 30));
-		allSlots.add(LocalTime.of(12, 00));
-		allSlots.add(LocalTime.of(12, 30));
-		allSlots.add(LocalTime.of(13, 00));
-		allSlots.add(LocalTime.of(14, 00));
-		allSlots.add(LocalTime.of(14, 30));
-		allSlots.add(LocalTime.of(15, 00));
-		allSlots.add(LocalTime.of(15, 30));
-		allSlots.add(LocalTime.of(16, 00));
-		allSlots.add(LocalTime.of(16, 30));
-		allSlots.add(LocalTime.of(17, 00));
-		allSlots.add(LocalTime.of(17, 30));
-		allSlots.add(LocalTime.of(18, 00));
-		allSlots.add(LocalTime.of(18, 30));
-		allSlots.add(LocalTime.of(19, 00));
-		allSlots.add(LocalTime.of(19, 30));
-		allSlots.add(LocalTime.of(20, 00));
+		allSlots.add(LocalTime.of(9, 00,00));
+		allSlots.add(LocalTime.of(9, 30,00));
+		allSlots.add(LocalTime.of(10, 00,00));
+		allSlots.add(LocalTime.of(10, 30,00));
+		allSlots.add(LocalTime.of(11, 00,00));
+		allSlots.add(LocalTime.of(11, 30,00));
+		allSlots.add(LocalTime.of(12, 00,00));
+		allSlots.add(LocalTime.of(12, 30,00));
+		allSlots.add(LocalTime.of(13, 00,00));
+		allSlots.add(LocalTime.of(14, 00,00));
+		allSlots.add(LocalTime.of(14, 30,00));
+		allSlots.add(LocalTime.of(15, 00,00));
+		allSlots.add(LocalTime.of(15, 30,00));
+		allSlots.add(LocalTime.of(16, 00,00));
+		allSlots.add(LocalTime.of(16, 30,00));
+		allSlots.add(LocalTime.of(17, 00,00));
+		allSlots.add(LocalTime.of(17, 30,00));
+		allSlots.add(LocalTime.of(18, 00,00));
+		allSlots.add(LocalTime.of(18, 30,00));
+		allSlots.add(LocalTime.of(19, 00,00));
+		allSlots.add(LocalTime.of(19, 30,00));
 
 		List<Appointment> listOfAppointments = (List<Appointment>) appointmentRepository.findAll();
 		Iterator<Appointment> itr = listOfAppointments.iterator();
@@ -171,10 +170,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 			Appointment appointment = itr.next();
 			if (!appointment.getDateTime().toLocalDate().isEqual(time.toLocalDate())) {
 				listOfAppointments.remove(appointment);
-			} else if (appointment.getTest().equals(testCenter)) {
+			} else if (!appointment.getTest().equals(testCenter)) {
 				listOfAppointments.remove(appointment);
 			} else if (appointment.getDateTime().toLocalTime().compareTo(time.toLocalTime()) == 0) {
-				allSlots.contains(appointment.getDateTime().toLocalTime());
+				
+					allSlots.remove(appointment.getDateTime().toLocalTime());
+				
 			}
 		}
 
