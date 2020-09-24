@@ -1,6 +1,5 @@
 package com.cg.hcs.appointmentService;
 
-import java.math.BigInteger;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

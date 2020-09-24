@@ -1,7 +1,6 @@
 package com.cg.healthCareSystem.appointmentService.dao;
 
 import java.math.BigInteger;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

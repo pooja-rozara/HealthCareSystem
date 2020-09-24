@@ -96,9 +96,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 			if (dateTime.toLocalDate().equals(LocalDate.now())
 					&& Duration.between(dateTime.toLocalTime(), LocalDateTime.now().toLocalTime()).toMinutes() >= 30
 					&& dateTime.toLocalTime().isAfter(LocalTime.now())) {
-				appointmentRepository.setStatus(1,appointmentId);
+				appointmentRepository.setStatus(1, appointmentId);
 			} else if (dateTime.isAfter(LocalDateTime.now()) && !dateTime.toLocalDate().equals(LocalDate.now())) {
-				appointmentRepository.setStatus(1,appointmentId);
+				appointmentRepository.setStatus(1, appointmentId);
 			} else
 				throw new NotPossibleException("Appointment date and time is already missed!!");
 		} else if (statusValue == 1) {
@@ -114,26 +114,19 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public Appointment makeAppointment(User user, DiagnosticCenter diagnosticCenter, TestCenter testCenter,
 			LocalDateTime dateTime) {
 
-		if(validateDate(dateTime))
-		{
-			List<LocalTime> allSlots=getAvailableSlots(testCenter, dateTime);
-			if(allSlots.contains(dateTime.toLocalTime()))
-			{
-				Appointment appointment=new Appointment(user,testCenter,dateTime,diagnosticCenter,0);
+		if (validateDate(dateTime)) {
+			List<LocalTime> allSlots = getAvailableSlots(testCenter, dateTime);
+			if (allSlots.contains(dateTime.toLocalTime())) {
+				Appointment appointment = new Appointment(user, testCenter, dateTime, diagnosticCenter, 0);
 				appointmentRepository.save(appointment);
 			}
-			
-			
-		}
-		else if(dateTime.toLocalDate().getDayOfMonth() == 7)
-		{
+
+		} else if (dateTime.toLocalDate().getDayOfMonth() == 7) {
 			throw new NotPossibleException("we are closed on Sunday!");
-		}
-		else
-		{
+		} else {
 			throw new NotPossibleException("Please select date of today or any day within 30 days of today.");
 		}
-		
+
 		return null;
 	}
 
@@ -148,7 +141,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Override
 	public List<LocalTime> getAvailableSlots(TestCenter testCenter, LocalDateTime time) {
-		List<LocalTime> allSlots=new ArrayList<LocalTime>();
+		List<LocalTime> allSlots = new ArrayList<LocalTime>();
 		allSlots.add(LocalTime.of(9, 00));
 		allSlots.add(LocalTime.of(9, 30));
 		allSlots.add(LocalTime.of(10, 00));
@@ -172,26 +165,21 @@ public class AppointmentServiceImpl implements AppointmentService {
 		allSlots.add(LocalTime.of(19, 30));
 		allSlots.add(LocalTime.of(20, 00));
 
-		List<Appointment> listOfAppointments=(List<Appointment>) appointmentRepository.findAll();
+		List<Appointment> listOfAppointments = (List<Appointment>) appointmentRepository.findAll();
 		Iterator<Appointment> itr = listOfAppointments.iterator();
-		while (itr.hasNext()) { 
-			Appointment appointment = itr.next(); 
-			if(!appointment.getDateTime().toLocalDate().isEqual(time.toLocalDate()))
-			{
+		while (itr.hasNext()) {
+			Appointment appointment = itr.next();
+			if (!appointment.getDateTime().toLocalDate().isEqual(time.toLocalDate())) {
 				listOfAppointments.remove(appointment);
-			}
-			else if (appointment.getTest().equals(testCenter)) { 
-				listOfAppointments.remove(appointment); 
-			} 
-			else if(appointment.getDateTime().toLocalTime().compareTo(time.toLocalTime())==0)
-			{
+			} else if (appointment.getTest().equals(testCenter)) {
+				listOfAppointments.remove(appointment);
+			} else if (appointment.getDateTime().toLocalTime().compareTo(time.toLocalTime()) == 0) {
 				allSlots.contains(appointment.getDateTime().toLocalTime());
 			}
 		}
-		
-		
+
 		return allSlots;
-		
+
 	}
 
 	@Override
@@ -200,17 +188,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 		if (appointment.isEmpty()) {
 			throw new NoValueFoundException("No appointment present with this appointment Id");
 		}
-		boolean status=appointmentRepository.setStatus(-1,appointmentId);
-		if(status)
-		{
+		boolean status = appointmentRepository.setStatus(-1, appointmentId);
+		if (status) {
 			return "Appointment Cancelled!!";
-		}
-		else
-		{
+		} else {
 			return "Problem Occured";
 		}
 	}
-
-
 
 }
