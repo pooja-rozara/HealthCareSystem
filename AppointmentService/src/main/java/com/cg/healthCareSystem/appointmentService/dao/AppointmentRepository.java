@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.cg.healthCareSystem.appointmentService.entity.Appointment;
@@ -27,7 +28,5 @@ public interface AppointmentRepository extends CrudRepository<Appointment,BigInt
 	@Query("Select a.dateTime from Appointment a where a.appointmentId=?1")
 	LocalDateTime fetchDateTimeByAppointmentId(BigInteger appointmentId);
 
-	@Query("Update Appointment set status=?1 where appointmentId=?2")
-	boolean setStatus(int status,BigInteger appointmentId);
 
 }

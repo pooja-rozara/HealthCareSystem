@@ -69,10 +69,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Override
 	public List<Appointment> fetchAppointmentsByDiagnosticCenterId(String diagnosticCenterId) {
 		List<Appointment> appointmentList = null;
-		Optional<DiagnosticCenter> diagnosticCenter = diagnosticCenterRepository.findById(diagnosticCenterId);// use
-		// another
-		// service
-		// here
+		Optional<DiagnosticCenter> diagnosticCenter = diagnosticCenterRepository.findById(diagnosticCenterId);// use another service here
 		if (diagnosticCenter.isEmpty()) {
 			throw new NoValueFoundException("No Diagnostic Center present with this Center Id");
 		}
@@ -96,9 +93,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 			if (dateTime.toLocalDate().equals(LocalDate.now())
 					&& Duration.between(dateTime.toLocalTime(), LocalDateTime.now().toLocalTime()).toMinutes() >= 30
 					&& dateTime.toLocalTime().isAfter(LocalTime.now())) {
-				appointmentRepository.setStatus(1, appointmentId);
+				appointment.get().setStatus(1);
+				appointmentRepository.save(appointment.get());
 			} else if (dateTime.isAfter(LocalDateTime.now()) && !dateTime.toLocalDate().equals(LocalDate.now())) {
-				appointmentRepository.setStatus(1, appointmentId);
+				appointment.get().setStatus(1);
+				appointmentRepository.save(appointment.get());
 			} else
 				throw new NotPossibleException("Appointment date and time is already missed!!");
 		} else if (statusValue == 1) {
@@ -142,27 +141,27 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Override
 	public List<LocalTime> getAvailableSlots(TestCenter testCenter, LocalDateTime time) {
 		List<LocalTime> allSlots = new ArrayList<LocalTime>();
-		allSlots.add(LocalTime.of(9, 00,00));
-		allSlots.add(LocalTime.of(9, 30,00));
-		allSlots.add(LocalTime.of(10, 00,00));
-		allSlots.add(LocalTime.of(10, 30,00));
-		allSlots.add(LocalTime.of(11, 00,00));
-		allSlots.add(LocalTime.of(11, 30,00));
-		allSlots.add(LocalTime.of(12, 00,00));
-		allSlots.add(LocalTime.of(12, 30,00));
-		allSlots.add(LocalTime.of(13, 00,00));
-		allSlots.add(LocalTime.of(14, 00,00));
-		allSlots.add(LocalTime.of(14, 30,00));
-		allSlots.add(LocalTime.of(15, 00,00));
-		allSlots.add(LocalTime.of(15, 30,00));
-		allSlots.add(LocalTime.of(16, 00,00));
-		allSlots.add(LocalTime.of(16, 30,00));
-		allSlots.add(LocalTime.of(17, 00,00));
-		allSlots.add(LocalTime.of(17, 30,00));
-		allSlots.add(LocalTime.of(18, 00,00));
-		allSlots.add(LocalTime.of(18, 30,00));
-		allSlots.add(LocalTime.of(19, 00,00));
-		allSlots.add(LocalTime.of(19, 30,00));
+		allSlots.add(LocalTime.of(9, 00, 00));
+		allSlots.add(LocalTime.of(9, 30, 00));
+		allSlots.add(LocalTime.of(10, 00, 00));
+		allSlots.add(LocalTime.of(10, 30, 00));
+		allSlots.add(LocalTime.of(11, 00, 00));
+		allSlots.add(LocalTime.of(11, 30, 00));
+		allSlots.add(LocalTime.of(12, 00, 00));
+		allSlots.add(LocalTime.of(12, 30, 00));
+		allSlots.add(LocalTime.of(13, 00, 00));
+		allSlots.add(LocalTime.of(14, 00, 00));
+		allSlots.add(LocalTime.of(14, 30, 00));
+		allSlots.add(LocalTime.of(15, 00, 00));
+		allSlots.add(LocalTime.of(15, 30, 00));
+		allSlots.add(LocalTime.of(16, 00, 00));
+		allSlots.add(LocalTime.of(16, 30, 00));
+		allSlots.add(LocalTime.of(17, 00, 00));
+		allSlots.add(LocalTime.of(17, 30, 00));
+		allSlots.add(LocalTime.of(18, 00, 00));
+		allSlots.add(LocalTime.of(18, 30, 00));
+		allSlots.add(LocalTime.of(19, 00, 00));
+		allSlots.add(LocalTime.of(19, 30, 00));
 
 		List<Appointment> listOfAppointments = (List<Appointment>) appointmentRepository.findAll();
 		Iterator<Appointment> itr = listOfAppointments.iterator();
@@ -173,9 +172,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 			} else if (!appointment.getTest().equals(testCenter)) {
 				listOfAppointments.remove(appointment);
 			} else if (appointment.getDateTime().toLocalTime().compareTo(time.toLocalTime()) == 0) {
-				
-					allSlots.remove(appointment.getDateTime().toLocalTime());
-				
+
+				allSlots.remove(appointment.getDateTime().toLocalTime());
+
 			}
 		}
 
@@ -189,8 +188,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 		if (appointment.isEmpty()) {
 			throw new NoValueFoundException("No appointment present with this appointment Id");
 		}
-		boolean status = appointmentRepository.setStatus(-1, appointmentId);
-		if (status) {
+		appointment.get().setStatus(1);
+		Appointment appointmentObject=appointmentRepository.save(appointment.get());
+		
+		if (appointmentObject!=null) {
 			return "Appointment Cancelled!!";
 		} else {
 			return "Problem Occured";
