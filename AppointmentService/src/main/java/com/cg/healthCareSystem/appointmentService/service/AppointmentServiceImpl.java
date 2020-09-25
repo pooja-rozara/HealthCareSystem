@@ -16,10 +16,10 @@ import org.springframework.stereotype.Service;
 
 import com.cg.healthCareSystem.appointmentService.dao.AppointmentRepository;
 import com.cg.healthCareSystem.appointmentService.dao.DiagnosticCenterRepository;
+import com.cg.healthCareSystem.appointmentService.dao.TestRepository;
 import com.cg.healthCareSystem.appointmentService.dao.UserRepository;
 import com.cg.healthCareSystem.appointmentService.entity.Appointment;
 import com.cg.healthCareSystem.appointmentService.entity.DiagnosticCenter;
-import com.cg.healthCareSystem.appointmentService.entity.TestCenter;
 import com.cg.healthCareSystem.appointmentService.entity.User;
 import com.cg.healthCareSystem.appointmentService.exception.NoValueFoundException;
 import com.cg.healthCareSystem.appointmentService.exception.NotPossibleException;
@@ -36,9 +36,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Autowired
 	private DiagnosticCenterRepository diagnosticCenterRepository;// use another service and remove this
 
+	@Autowired
+	private TestRepository testRepository;
+	//
 	@Override
 	public String checkAppointmentStatus(BigInteger appointmentId) {
 		Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
+		System.out.println(appointmentId);
 		if (appointment.isEmpty()) {
 			throw new NoValueFoundException("No appointment present with this appointment Id");
 		}
@@ -110,17 +114,17 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public Appointment makeAppointment(User user, DiagnosticCenter diagnosticCenter, TestCenter testCenter,
+	public Appointment makeAppointment(String userId, String diagnosticCenterId, String testCenterId,
 			LocalDateTime dateTime) {
 
 		if (validateDate(dateTime)) {
-			List<LocalTime> allSlots = getAvailableSlots(testCenter, dateTime);
+			List<LocalTime> allSlots = getAvailableSlots(testCenterId, dateTime);
 			if (allSlots.contains(dateTime.toLocalTime())) {
-				Appointment appointment = new Appointment(user, testCenter, dateTime, diagnosticCenter, 0);
+				Appointment appointment = new Appointment(userRepository.findById(userId).get(), testRepository.findById(testCenterId).get(), dateTime, diagnosticCenterRepository.findById(diagnosticCenterId).get(), 0);
 				appointmentRepository.save(appointment);
 			}
 
-		} else if (dateTime.toLocalDate().getDayOfMonth() == 7) {
+		} else if (dateTime.toLocalDate().getDayOfWeek().toString().equalsIgnoreCase("SUNDAY")) {
 			throw new NotPossibleException("we are closed on Sunday!");
 		} else {
 			throw new NotPossibleException("Please select date of today or any day within 30 days of today.");
@@ -132,14 +136,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Override
 	public boolean validateDate(LocalDateTime dateTime) {
 		if (dateTime.toLocalDate().isEqual(LocalDate.now())
-				|| dateTime.toLocalDate().isBefore(LocalDate.now().plusDays(30))
-				|| dateTime.toLocalDate().getDayOfMonth() == 7)
+				|| !dateTime.toLocalDate().isBefore(LocalDate.now().plusDays(30))
+				|| dateTime.toLocalDate().getDayOfWeek().toString().equalsIgnoreCase("SUNDAY"))
 			return false;
 		return true;
 	}
 
 	@Override
-	public List<LocalTime> getAvailableSlots(TestCenter testCenter, LocalDateTime time) {
+	public List<LocalTime> getAvailableSlots(String testId, LocalDateTime time) {
 		List<LocalTime> allSlots = new ArrayList<LocalTime>();
 		allSlots.add(LocalTime.of(9, 00, 00));
 		allSlots.add(LocalTime.of(9, 30, 00));
@@ -169,7 +173,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			Appointment appointment = itr.next();
 			if (!appointment.getDateTime().toLocalDate().isEqual(time.toLocalDate())) {
 				listOfAppointments.remove(appointment);
-			} else if (!appointment.getTest().equals(testCenter)) {
+			} else if (!appointment.getTest().getTestId().equals(testId)) {
 				listOfAppointments.remove(appointment);
 			} else if (appointment.getDateTime().toLocalTime().compareTo(time.toLocalTime()) == 0) {
 
@@ -188,7 +192,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		if (appointment.isEmpty()) {
 			throw new NoValueFoundException("No appointment present with this appointment Id");
 		}
-		appointment.get().setStatus(1);
+		appointment.get().setStatus(-1);
 		Appointment appointmentObject=appointmentRepository.save(appointment.get());
 		
 		if (appointmentObject!=null) {

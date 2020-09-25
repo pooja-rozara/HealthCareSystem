@@ -13,25 +13,26 @@ import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cg.healthCareSystem.appointmentService.dao.AppointmentRepository;
 import com.cg.healthCareSystem.appointmentService.entity.Appointment;
 import com.cg.healthCareSystem.appointmentService.entity.DiagnosticCenter;
 import com.cg.healthCareSystem.appointmentService.entity.TestCenter;
 
-@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
 class AppointmentServiceImplTest {
 
 	@InjectMocks
 	private AppointmentServiceImpl appointmentService;
 	
-	@MockBean
+	@Mock
 	private AppointmentRepository appointmentRepository;
 	
 	Appointment appointment=new Appointment();
@@ -85,8 +86,10 @@ class AppointmentServiceImplTest {
 	@Test
 	public void checkStatusTest()
 	{
+		Mockito.when(appointmentRepository.findById(appointmentId)).thenAnswer((Answer<Appointment>) appointment);
 		Mockito.when(appointmentRepository.fetchStatusByAppointmentId(appointmentId)).thenReturn(0);
-		assertThat(appointmentService.checkAppointmentStatus(appointmentId).compareTo("Pending"));
+		System.out.println("testing "+appointmentId);
+		assertThat(appointmentService.checkAppointmentStatus(appointmentId).compareTo("Cancelled"));
 	}
 
 }

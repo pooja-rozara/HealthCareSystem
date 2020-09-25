@@ -14,7 +14,6 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "Diagnostic_centers")
@@ -65,7 +64,7 @@ public class DiagnosticCenter {
 		this.centerId = centerId;
 	}
 
-	@JsonManagedReference
+	@JsonBackReference
 	public List<TestCenter> getListOfTests() {
 		return listOfTests;
 	}

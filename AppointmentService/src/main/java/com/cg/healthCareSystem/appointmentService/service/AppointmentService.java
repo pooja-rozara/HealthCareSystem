@@ -17,7 +17,7 @@ public interface AppointmentService {
 	List<Appointment> fetchAppointmentsByUserId(String userId) ;
 
 
-	Appointment makeAppointment(User user, DiagnosticCenter diagnosticCenter, TestCenter testCenter,
+	Appointment makeAppointment(String userId, String diagnosticCenterId, String testCenterId,
 			LocalDateTime dateTime);
 
 	List<Appointment> fetchAppointmentsByDiagnosticCenterId(String diagnosticCenterId);
@@ -26,7 +26,7 @@ public interface AppointmentService {
 	
 	boolean validateDate(LocalDateTime dateTime);
 
-	List<LocalTime> getAvailableSlots(TestCenter testCenter, LocalDateTime time);
+	List<LocalTime> getAvailableSlots(String testId, LocalDateTime time);
 	
 	String cancelAppointment(BigInteger appointmentId);
 
