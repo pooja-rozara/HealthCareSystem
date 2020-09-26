@@ -1,6 +1,5 @@
 package com.cg.healthCareSystem.appointmentService.dto;
 
-
 public class TestCenterDto {
 	private String testId;
 	private String testName;
