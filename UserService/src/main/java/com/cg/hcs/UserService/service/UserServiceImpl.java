@@ -3,11 +3,13 @@ package com.cg.hcs.UserService.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.cg.hcs.UserService.dao.UserRepository;
 import com.cg.hcs.UserService.entity.User;
 import com.cg.hcs.UserService.exception.NoValueFoundException;
 
+@Service
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepository;
