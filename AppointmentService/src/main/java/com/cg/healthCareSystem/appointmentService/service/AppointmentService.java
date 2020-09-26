@@ -6,9 +6,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 import com.cg.healthCareSystem.appointmentService.entity.Appointment;
-import com.cg.healthCareSystem.appointmentService.entity.DiagnosticCenter;
-import com.cg.healthCareSystem.appointmentService.entity.TestCenter;
-import com.cg.healthCareSystem.appointmentService.entity.User;
 
 public interface AppointmentService {
 
