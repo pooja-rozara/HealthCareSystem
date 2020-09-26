@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.cg.hcs.UserService.dto.UserDto;
+
 
 @Entity
 @Table(name = "users")
@@ -73,6 +75,19 @@ public class User {
 	}
 	public void setEmailId(String emailId) {
 		this.emailId = emailId;
+	}
+	
+	public UserDto convertEntityIntoDto()
+	{
+		UserDto userDto=new UserDto();
+		userDto.setUserId(this.userId);
+		userDto.setContactNumber(this.contactNumber);
+		userDto.setEmailId(this.emailId);
+		userDto.setUserName(this.userName);
+		userDto.setUserRole(this.userRole);
+		userDto.setUserPassword(this.userPassword);
+		
+		return userDto;
 	}
 	
 }
