@@ -1,6 +1,7 @@
 package com.cg.healthCareSystem.appointmentService.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThat;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -16,7 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -83,13 +84,14 @@ class AppointmentServiceImplTest {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void checkStatusTest()
 	{
-		Mockito.when(appointmentRepository.findById(appointmentId)).thenAnswer((Answer<Appointment>) appointment);
+		
 		Mockito.when(appointmentRepository.fetchStatusByAppointmentId(appointmentId)).thenReturn(0);
 		System.out.println("testing "+appointmentId);
-		assertThat(appointmentService.checkAppointmentStatus(appointmentId).compareTo("Cancelled"));
+		assertThat(appointmentService.checkAppointmentStatus(appointmentId).equalsIgnoreCase("Cancelled"));
 	}
 
 }

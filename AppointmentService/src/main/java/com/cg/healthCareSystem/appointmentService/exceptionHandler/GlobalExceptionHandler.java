@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ApiError> handlingNoValueFoundException(NoValueFoundException e)
 	{
 		ApiError error=new ApiError();
-		error.setException("No Value Found exception: "+ e.getMessage());
+		error.setException(" "+ e.getMessage());
 		HttpStatus status=HttpStatus.BAD_REQUEST;
 		return new ResponseEntity<ApiError>(error, status);
 	}
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ApiError> handlingNotPossibleException(NotPossibleException e)
 	{
 		ApiError error=new ApiError();
-		error.setException("Operation can't be completed: "+ e.getMessage());
+		error.setException(" "+ e.getMessage());
 		HttpStatus status=HttpStatus.BAD_REQUEST;
 		return new ResponseEntity<ApiError>(error, status);
 	}

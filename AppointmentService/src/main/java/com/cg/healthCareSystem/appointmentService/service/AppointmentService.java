@@ -29,5 +29,4 @@ public interface AppointmentService {
 	List<LocalTime> getAvailableSlots(String testId, LocalDateTime time);
 	
 	String cancelAppointment(BigInteger appointmentId);
-
 }

@@ -37,8 +37,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 	private DiagnosticCenterRepository diagnosticCenterRepository;// use another service and remove this
 
 	@Autowired
-	private TestRepository testRepository;
-	//
+	private TestRepository testRepository;//use another service
+	
 	@Override
 	public String checkAppointmentStatus(BigInteger appointmentId) {
 		Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
@@ -123,59 +123,70 @@ public class AppointmentServiceImpl implements AppointmentService {
 				Appointment appointment = new Appointment(userRepository.findById(userId).get(), testRepository.findById(testCenterId).get(), dateTime, diagnosticCenterRepository.findById(diagnosticCenterId).get(), 0);
 				appointmentRepository.save(appointment);
 			}
+			else
+				throw new NotPossibleException("sorry");
 
-		} else if (dateTime.toLocalDate().getDayOfWeek().toString().equalsIgnoreCase("SUNDAY")) {
-			throw new NotPossibleException("we are closed on Sunday!");
-		} else {
-			throw new NotPossibleException("Please select date of today or any day within 30 days of today.");
 		}
-
 		return null;
 	}
 
 	@Override
 	public boolean validateDate(LocalDateTime dateTime) {
 		if (dateTime.toLocalDate().isEqual(LocalDate.now())
-				|| !dateTime.toLocalDate().isBefore(LocalDate.now().plusDays(30))
-				|| dateTime.toLocalDate().getDayOfWeek().toString().equalsIgnoreCase("SUNDAY"))
-			return false;
+				|| !dateTime.toLocalDate().isBefore(LocalDate.now().plusDays(30)))
+		{
+			throw new NotPossibleException("Please select date of today or any day within 30 days of today.");
+		}
+		else if( dateTime.toLocalDate().getDayOfWeek().toString().equalsIgnoreCase("SUNDAY")) {
+			throw new NotPossibleException("we are closed on Sunday!");
+		}
+			
 		return true;
 	}
 
 	@Override
 	public List<LocalTime> getAvailableSlots(String testId, LocalDateTime time) {
 		List<LocalTime> allSlots = new ArrayList<LocalTime>();
-		allSlots.add(LocalTime.of(9, 00, 00));
-		allSlots.add(LocalTime.of(9, 30, 00));
-		allSlots.add(LocalTime.of(10, 00, 00));
-		allSlots.add(LocalTime.of(10, 30, 00));
-		allSlots.add(LocalTime.of(11, 00, 00));
-		allSlots.add(LocalTime.of(11, 30, 00));
-		allSlots.add(LocalTime.of(12, 00, 00));
-		allSlots.add(LocalTime.of(12, 30, 00));
-		allSlots.add(LocalTime.of(13, 00, 00));
-		allSlots.add(LocalTime.of(14, 00, 00));
-		allSlots.add(LocalTime.of(14, 30, 00));
-		allSlots.add(LocalTime.of(15, 00, 00));
-		allSlots.add(LocalTime.of(15, 30, 00));
-		allSlots.add(LocalTime.of(16, 00, 00));
-		allSlots.add(LocalTime.of(16, 30, 00));
-		allSlots.add(LocalTime.of(17, 00, 00));
-		allSlots.add(LocalTime.of(17, 30, 00));
-		allSlots.add(LocalTime.of(18, 00, 00));
-		allSlots.add(LocalTime.of(18, 30, 00));
-		allSlots.add(LocalTime.of(19, 00, 00));
-		allSlots.add(LocalTime.of(19, 30, 00));
+		allSlots.add(LocalTime.of(9, 00));
+		allSlots.add(LocalTime.of(9, 30));
+		allSlots.add(LocalTime.of(10, 00));
+		allSlots.add(LocalTime.of(10, 30));
+		allSlots.add(LocalTime.of(11, 00));
+		allSlots.add(LocalTime.of(11, 30));
+		allSlots.add(LocalTime.of(12, 00));
+		allSlots.add(LocalTime.of(12, 30));
+		allSlots.add(LocalTime.of(13, 00));
+		allSlots.add(LocalTime.of(14, 00));
+		allSlots.add(LocalTime.of(14, 30));
+		allSlots.add(LocalTime.of(15, 00));
+		allSlots.add(LocalTime.of(15, 30));
+		allSlots.add(LocalTime.of(16, 00));
+		allSlots.add(LocalTime.of(16, 30));
+		allSlots.add(LocalTime.of(17, 00));
+		allSlots.add(LocalTime.of(17, 30));
+		allSlots.add(LocalTime.of(18, 00));
+		allSlots.add(LocalTime.of(18, 30));
+		allSlots.add(LocalTime.of(19, 00));
+		allSlots.add(LocalTime.of(19, 30));
 
 		List<Appointment> listOfAppointments = (List<Appointment>) appointmentRepository.findAll();
+		List<Appointment> toRemoveAppointments=new ArrayList<Appointment>();
 		Iterator<Appointment> itr = listOfAppointments.iterator();
+		if(validateDate(time))
+		{
 		while (itr.hasNext()) {
 			Appointment appointment = itr.next();
 			if (!appointment.getDateTime().toLocalDate().isEqual(time.toLocalDate())) {
-				listOfAppointments.remove(appointment);
+				toRemoveAppointments.add(appointment);
 			} else if (!appointment.getTest().getTestId().equals(testId)) {
-				listOfAppointments.remove(appointment);
-			} else if (appointment.getDateTime().toLocalTime().compareTo(time.toLocalTime()) == 0) {
+				toRemoveAppointments.add(appointment);
+			} 
+		}}
+		listOfAppointments.removeAll(toRemoveAppointments);
+		itr = listOfAppointments.iterator();
+		while (itr.hasNext()) {
+			Appointment appointment = itr.next();
+			 if (appointment.getDateTime().toLocalTime().compareTo(time.toLocalTime()) == 0) {
 
 				allSlots.remove(appointment.getDateTime().toLocalTime());
 

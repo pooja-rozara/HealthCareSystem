@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.healthCareSystem.appointmentService.entity.Appointment;
-import com.cg.healthCareSystem.appointmentService.entity.DiagnosticCenter;
-import com.cg.healthCareSystem.appointmentService.entity.TestCenter;
-import com.cg.healthCareSystem.appointmentService.entity.User;
 import com.cg.healthCareSystem.appointmentService.service.AppointmentService;
 
 @RestController
