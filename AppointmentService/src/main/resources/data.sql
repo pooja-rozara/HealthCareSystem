@@ -1,1 +1,0 @@
-insert into users values('2234FHGK', '9467238475', 'amaan@gmail.com', 'amaan34', 'Zain@894', 'Customer');

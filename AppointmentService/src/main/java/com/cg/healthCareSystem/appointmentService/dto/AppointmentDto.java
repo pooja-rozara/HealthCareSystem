@@ -3,32 +3,44 @@ package com.cg.healthCareSystem.appointmentService.dto;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 
+import com.cg.healthCareSystem.appointmentService.entity.Appointment;
+
 
 
 public class AppointmentDto {
-	private UserDto user;
+	
+	private String userId;
 	private BigInteger appointmentId;
-	private TestCenterDto test;
+	private String testId;
 	private LocalDateTime dateTime;
 	private int status;
-	private DiagnosticCenterDto diagnosticCenter;
+	private String diagnosticCenterId;
 	public AppointmentDto() {
 		super();
 		
 	}
-	public AppointmentDto(UserDto user, TestCenterDto test, LocalDateTime dateTime,DiagnosticCenterDto diagnosticCenter, int status) {
+	public AppointmentDto(Appointment appointment) {
+		this.appointmentId=appointment.getAppointmentId();
+		this.dateTime=appointment.getDateTime();
+		this.userId=appointment.getUserId();
+		this.testId=appointment.getTestId();
+		this.status=appointment.getStatus();
+		this.diagnosticCenterId=appointment.getDiagnosticCenterId();
+		
+	}
+	public AppointmentDto(String userId, String testId, LocalDateTime dateTime, int status, String diagnosticCenterId) {
 		super();
-		this.user = user;
-		this.test = test;
+		this.userId = userId;
+		this.testId = testId;
 		this.dateTime = dateTime;
-		this.diagnosticCenter = diagnosticCenter;
 		this.status = status;
+		this.diagnosticCenterId = diagnosticCenterId;
 	}
-	public UserDto getUser() {
-		return user;
+	public String getUserId() {
+		return userId;
 	}
-	public void setUser(UserDto user) {
-		this.user = user;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	public BigInteger getAppointmentId() {
 		return appointmentId;
@@ -36,11 +48,11 @@ public class AppointmentDto {
 	public void setAppointmentId(BigInteger appointmentId) {
 		this.appointmentId = appointmentId;
 	}
-	public TestCenterDto getTest() {
-		return test;
+	public String getTestId() {
+		return testId;
 	}
-	public void setTest(TestCenterDto test) {
-		this.test = test;
+	public void setTestId(String testId) {
+		this.testId = testId;
 	}
 	public LocalDateTime getDateTime() {
 		return dateTime;
@@ -54,11 +66,11 @@ public class AppointmentDto {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	public DiagnosticCenterDto getDiagnosticCenter() {
-		return diagnosticCenter;
+	public String getDiagnosticCenterId() {
+		return diagnosticCenterId;
 	}
-	public void setDiagnosticCenter(DiagnosticCenterDto diagnosticCenter) {
-		this.diagnosticCenter = diagnosticCenter;
+	public void setDiagnosticCenterId(String diagnosticCenterId) {
+		this.diagnosticCenterId = diagnosticCenterId;
 	}
 	
 }

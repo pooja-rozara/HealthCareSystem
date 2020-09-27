@@ -24,5 +24,7 @@ public class UserServiceController {
 		UserDto userDto=user.convertEntityIntoDto();
 		return new ResponseEntity<>(userDto,HttpStatus.OK);
 	}
+	
+	@Get
 
 }

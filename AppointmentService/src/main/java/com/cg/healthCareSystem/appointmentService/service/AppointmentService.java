@@ -5,25 +5,28 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import com.cg.healthCareSystem.appointmentService.dto.AppointmentDto;
 import com.cg.healthCareSystem.appointmentService.entity.Appointment;
 
 public interface AppointmentService {
 
 	String checkAppointmentStatus(BigInteger appointmentId);
 
-	List<Appointment> fetchAppointmentsByUserId(String userId) ;
+	List<AppointmentDto> fetchAppointmentsByUserId(String userId);
 
+	AppointmentDto makeAppointment(AppointmentDto appointment);
 
-	Appointment makeAppointment(String userId, String diagnosticCenterId, String testCenterId,
-			LocalDateTime dateTime);
-
-	List<Appointment> fetchAppointmentsByDiagnosticCenterId(String diagnosticCenterId);
+	List<AppointmentDto> fetchAppointmentsByDiagnosticCenterId(String diagnosticCenterId);
 
 	boolean approveAppointment(BigInteger appointmentId);
-	
+
 	boolean validateDate(LocalDateTime dateTime);
 
 	List<LocalTime> getAvailableSlots(String testId, LocalDateTime time);
-	
+
 	String cancelAppointment(BigInteger appointmentId);
+
+	boolean checkAppointmentByAppointmentId(BigInteger appointmentId);
+
+	AppointmentDto searchAppointmentByAppointmentId(BigInteger appointmentId);
 }

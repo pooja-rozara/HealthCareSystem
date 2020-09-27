@@ -3,56 +3,65 @@ package com.cg.healthCareSystem.appointmentService.entity;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.cg.healthCareSystem.appointmentService.dto.AppointmentDto;
+
 
 @Entity
 @Table(name = "appointments")
 public class Appointment {
-	@OneToOne(cascade = CascadeType.ALL) 
-	@JoinColumn(name = "user_fk")
-	private User user;
+
+	@Column(name="user_id")
+	private String userId;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "appointment_id")
 	private BigInteger appointmentId;
-	@OneToOne(cascade = CascadeType.ALL) 
-	@JoinColumn(name = "test_fk")
-	private TestCenter test;
+
+	@Column(name="test_id")
+	private String testId;
+
 	@Column(name = "date_time")
 	private LocalDateTime dateTime;
+
 	@Column(name = "status")
 	private int status;
-	@ManyToOne
-	@JoinColumn(name = "center_fk")
-	private DiagnosticCenter diagnosticCenter;
+
+	@Column(name="diagnostic_id")
+	private String diagnosticCenterId;
+
 	public Appointment() {
 		super();
-		
+
 	}
-	public Appointment(User user, TestCenter test, LocalDateTime dateTime,DiagnosticCenter diagnosticCenter, int status) {
+	public Appointment(AppointmentDto appointmentDto)
+	{
+		this.appointmentId=appointmentDto.getAppointmentId();
+		this.dateTime=appointmentDto.getDateTime();
+		this.userId=appointmentDto.getUserId();
+		this.testId=appointmentDto.getTestId();
+		this.status=appointmentDto.getStatus();
+		this.diagnosticCenterId=appointmentDto.getDiagnosticCenterId();
+	}
+	public Appointment(String userId, String testId, LocalDateTime dateTime, int status, String diagnosticCenterId) {
 		super();
-		this.user = user;
-		this.test = test;
+		this.userId = userId;
+		this.testId = testId;
 		this.dateTime = dateTime;
-		this.diagnosticCenter = diagnosticCenter;
 		this.status = status;
+		this.diagnosticCenterId = diagnosticCenterId;
 	}
-	public User getUser() {
-		return user;
+	public String getUserId() {
+		return userId;
 	}
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	public BigInteger getAppointmentId() {
 		return appointmentId;
@@ -60,11 +69,11 @@ public class Appointment {
 	public void setAppointmentId(BigInteger appointmentId) {
 		this.appointmentId = appointmentId;
 	}
-	public TestCenter getTest() {
-		return test;
+	public String getTestId() {
+		return testId;
 	}
-	public void setTest(TestCenter test) {
-		this.test = test;
+	public void setTestId(String testId) {
+		this.testId = testId;
 	}
 	public LocalDateTime getDateTime() {
 		return dateTime;
@@ -78,12 +87,12 @@ public class Appointment {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	@JsonManagedReference
-	public DiagnosticCenter getDiagnosticCenter() {
-		return diagnosticCenter;
+	public String getDiagnosticCenterId() {
+		return diagnosticCenterId;
 	}
-	public void setDiagnosticCenter(DiagnosticCenter diagnosticCenter) {
-		this.diagnosticCenter = diagnosticCenter;
+	public void setDiagnosticCenterId(String diagnosticCenterId) {
+		this.diagnosticCenterId = diagnosticCenterId;
 	}
 	
+
 }

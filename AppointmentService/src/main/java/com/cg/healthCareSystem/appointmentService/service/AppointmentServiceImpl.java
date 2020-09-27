@@ -10,17 +10,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.cg.healthCareSystem.appointmentService.dao.AppointmentRepository;
-import com.cg.healthCareSystem.appointmentService.dao.DiagnosticCenterRepository;
-import com.cg.healthCareSystem.appointmentService.dao.TestRepository;
-import com.cg.healthCareSystem.appointmentService.dao.UserRepository;
+import com.cg.healthCareSystem.appointmentService.dto.AppointmentDto;
 import com.cg.healthCareSystem.appointmentService.entity.Appointment;
-import com.cg.healthCareSystem.appointmentService.entity.DiagnosticCenter;
-import com.cg.healthCareSystem.appointmentService.entity.User;
 import com.cg.healthCareSystem.appointmentService.exception.NoValueFoundException;
 import com.cg.healthCareSystem.appointmentService.exception.NotPossibleException;
 
@@ -31,18 +29,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 	private AppointmentRepository appointmentRepository;
 
 	@Autowired
-	private UserRepository userRepository;// use another service and remove this
+	private RestTemplate restTemplate;
 
-	@Autowired
-	private DiagnosticCenterRepository diagnosticCenterRepository;// use another service and remove this
-
-	@Autowired
-	private TestRepository testRepository;//use another service
-	
 	@Override
 	public String checkAppointmentStatus(BigInteger appointmentId) {
 		Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
-		System.out.println(appointmentId);
 		if (appointment.isEmpty()) {
 			throw new NoValueFoundException("No appointment present with this appointment Id");
 		}
@@ -56,33 +47,36 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public List<Appointment> fetchAppointmentsByUserId(String userId) {
-		List<Appointment> appointmentList = null;
-		Optional<User> user = userRepository.findById(userId); // use another service here
-		if (user.isEmpty()) {
+	public List<AppointmentDto> fetchAppointmentsByUserId(String userId) {
+		List<Appointment> appointmentList = new ArrayList<Appointment>();
+		String url = "http://User-Service/userExist?Id=" + userId;// create this
+		Boolean userExists = restTemplate.getForObject(url, boolean.class); // use restTemplate from user
+		if (!userExists) {
 			throw new NoValueFoundException("No user present with this user Id");
 		}
 		try {
-			appointmentList = appointmentRepository.fetchAppointmentsByUserId(user.get());
+			appointmentList = appointmentRepository.fetchAppointmentsByUserId(userId);
 		} catch (NoSuchElementException e) {
 			throw new NoValueFoundException("You Haven't made any appointment yet");
 		}
-		return appointmentList;
+		return appointmentList.stream().map(a -> new AppointmentDto(a)).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<Appointment> fetchAppointmentsByDiagnosticCenterId(String diagnosticCenterId) {
-		List<Appointment> appointmentList = null;
-		Optional<DiagnosticCenter> diagnosticCenter = diagnosticCenterRepository.findById(diagnosticCenterId);// use another service here
-		if (diagnosticCenter.isEmpty()) {
+	public List<AppointmentDto> fetchAppointmentsByDiagnosticCenterId(String diagnosticCenterId) {
+		List<Appointment> appointmentList = new ArrayList<Appointment>();
+		// ask amaan about the url
+		String url = "http://diagnostic-center-service/diagnosticcenters/?Id=" + diagnosticCenterId;// change
+		Boolean diagnosticCenterExists = restTemplate.getForObject(url, boolean.class);
+		if (!diagnosticCenterExists) {
 			throw new NoValueFoundException("No Diagnostic Center present with this Center Id");
 		}
 		try {
-			appointmentList = appointmentRepository.fetchAppointmentsByDiagnosticCenterId(diagnosticCenter.get());
+			appointmentList = appointmentRepository.fetchAppointmentsByDiagnosticCenterId(diagnosticCenterId);
 		} catch (NoSuchElementException e) {
 			throw new NoValueFoundException("You Haven't made any appointment yet");
 		}
-		return appointmentList;
+		return appointmentList.stream().map(a -> new AppointmentDto(a)).collect(Collectors.toList());
 	}
 
 	@Override
@@ -114,33 +108,47 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public Appointment makeAppointment(String userId, String diagnosticCenterId, String testCenterId,
-			LocalDateTime dateTime) {
+	public AppointmentDto makeAppointment(AppointmentDto appointmentDto) {
+		Appointment appointment = new Appointment(appointmentDto);
 
-		if (validateDate(dateTime)) {
-			List<LocalTime> allSlots = getAvailableSlots(testCenterId, dateTime);
-			if (allSlots.contains(dateTime.toLocalTime())) {
-				Appointment appointment = new Appointment(userRepository.findById(userId).get(), testRepository.findById(testCenterId).get(), dateTime, diagnosticCenterRepository.findById(diagnosticCenterId).get(), 0);
-				appointmentRepository.save(appointment);
-			}
-			else
-				throw new NotPossibleException("sorry");
+		String diagnosticUrl = "http://Diagnostic-Service/diagnosticCenter?Id=" + appointment.getDiagnosticCenterId();
+		Boolean diagnosticCenterExists = restTemplate.getForObject(diagnosticUrl, boolean.class);
+		if (!diagnosticCenterExists) {
+			throw new NoValueFoundException("No Diagnostic Center present with this Center Id");
+		}
+
+		String userUrl = "http://User-Service/userExist?Id=" + appointment.getUserId();// create this
+		Boolean userExists = restTemplate.getForObject(userUrl, boolean.class); // use restTemplate from user
+		if (!userExists) {
+			throw new NoValueFoundException("No user present with this user Id");
+		}
+
+		String testUrl = "http://Test-Service/TestCenter?Id=" + appointment.getDiagnosticCenterId();
+		Boolean testCenterExists = restTemplate.getForObject(testUrl, boolean.class);
+		if (!testCenterExists) {
+			throw new NoValueFoundException("No Test Center present with this Center Id");
+		}
+
+		if (validateDate(appointment.getDateTime())) {
+			List<LocalTime> allSlots = getAvailableSlots(appointment.getTestId(), appointment.getDateTime());
+			if (allSlots.contains(appointment.getDateTime().toLocalTime())) {
+				appointment = appointmentRepository.save(appointment);
+			} else
+				throw new NotPossibleException("sorry we can't book you appointment");
 
 		}
-		return null;
+		return new AppointmentDto(appointment);
 	}
 
 	@Override
 	public boolean validateDate(LocalDateTime dateTime) {
 		if (dateTime.toLocalDate().isEqual(LocalDate.now())
-				|| !dateTime.toLocalDate().isBefore(LocalDate.now().plusDays(30)))
-		{
+				|| !dateTime.toLocalDate().isBefore(LocalDate.now().plusDays(30))) {
 			throw new NotPossibleException("Please select date of today or any day within 30 days of today.");
-		}
-		else if( dateTime.toLocalDate().getDayOfWeek().toString().equalsIgnoreCase("SUNDAY")) {
+		} else if (dateTime.toLocalDate().getDayOfWeek().toString().equalsIgnoreCase("SUNDAY")) {
 			throw new NotPossibleException("we are closed on Sunday!");
 		}
-			
+
 		return true;
 	}
 
@@ -170,23 +178,23 @@ public class AppointmentServiceImpl implements AppointmentService {
 		allSlots.add(LocalTime.of(19, 30));
 
 		List<Appointment> listOfAppointments = (List<Appointment>) appointmentRepository.findAll();
-		List<Appointment> toRemoveAppointments=new ArrayList<Appointment>();
+		List<Appointment> toRemoveAppointments = new ArrayList<Appointment>();
 		Iterator<Appointment> itr = listOfAppointments.iterator();
-		if(validateDate(time))
-		{
-		while (itr.hasNext()) {
-			Appointment appointment = itr.next();
-			if (!appointment.getDateTime().toLocalDate().isEqual(time.toLocalDate())) {
-				toRemoveAppointments.add(appointment);
-			} else if (!appointment.getTest().getTestId().equals(testId)) {
-				toRemoveAppointments.add(appointment);
-			} 
-		}}
+		if (validateDate(time)) {
+			while (itr.hasNext()) {
+				Appointment appointment = itr.next();
+				if (!appointment.getDateTime().toLocalDate().isEqual(time.toLocalDate())) {
+					toRemoveAppointments.add(appointment);
+				} else if (!appointment.getTestId().equals(testId)) {
+					toRemoveAppointments.add(appointment);
+				}
+			}
+		}
 		listOfAppointments.removeAll(toRemoveAppointments);
 		itr = listOfAppointments.iterator();
 		while (itr.hasNext()) {
 			Appointment appointment = itr.next();
-			 if (appointment.getDateTime().toLocalTime().compareTo(time.toLocalTime()) == 0) {
+			if (appointment.getDateTime().toLocalTime().compareTo(time.toLocalTime()) == 0) {
 
 				allSlots.remove(appointment.getDateTime().toLocalTime());
 
@@ -204,13 +212,25 @@ public class AppointmentServiceImpl implements AppointmentService {
 			throw new NoValueFoundException("No appointment present with this appointment Id");
 		}
 		appointment.get().setStatus(-1);
-		Appointment appointmentObject=appointmentRepository.save(appointment.get());
-		
-		if (appointmentObject!=null) {
+		Appointment appointmentObject = appointmentRepository.save(appointment.get());
+
+		if (appointmentObject != null) {
 			return "Appointment Cancelled!!";
 		} else {
 			return "Problem Occured";
 		}
+	}
+
+	@Override
+	public boolean checkAppointmentByAppointmentId(BigInteger appointmentId) {
+
+		return appointmentRepository.existsById(appointmentId);
+	}
+
+	@Override
+	public AppointmentDto searchAppointmentByAppointmentId(BigInteger appointmentId) {
+		
+		return new AppointmentDto(appointmentRepository.findById(appointmentId).get());
 	}
 
 }

@@ -6,12 +6,9 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.cg.healthCareSystem.appointmentService.entity.Appointment;
-import com.cg.healthCareSystem.appointmentService.entity.DiagnosticCenter;
-import com.cg.healthCareSystem.appointmentService.entity.User;
 
 @Repository
 public interface AppointmentRepository extends CrudRepository<Appointment,BigInteger > {
@@ -20,10 +17,10 @@ public interface AppointmentRepository extends CrudRepository<Appointment,BigInt
 	int fetchStatusByAppointmentId(BigInteger appointmentId);
 
 	@Query("Select a from Appointment a where a.user=?1")
-	List<Appointment> fetchAppointmentsByUserId(User user);
+	List<Appointment> fetchAppointmentsByUserId(String userId);
 
 	@Query("Select a from Appointment a where a.diagnosticCenter=?1")
-	List<Appointment> fetchAppointmentsByDiagnosticCenterId(DiagnosticCenter diagnosticCenter);
+	List<Appointment> fetchAppointmentsByDiagnosticCenterId(String diagnosticCenter);
 
 	@Query("Select a.dateTime from Appointment a where a.appointmentId=?1")
 	LocalDateTime fetchDateTimeByAppointmentId(BigInteger appointmentId);
