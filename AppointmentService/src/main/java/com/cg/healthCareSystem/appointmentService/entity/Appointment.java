@@ -93,6 +93,11 @@ public class Appointment {
 	public void setDiagnosticCenterId(String diagnosticCenterId) {
 		this.diagnosticCenterId = diagnosticCenterId;
 	}
+	@Override
+	public boolean equals(Object obj) {
+		Appointment appointment=(Appointment) obj;
+		return appointment.getAppointmentId()==this.appointmentId;
+	}
 	
 
 }

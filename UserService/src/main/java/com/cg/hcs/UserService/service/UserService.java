@@ -4,6 +4,10 @@ import com.cg.hcs.UserService.entity.User;
 
 public interface UserService {
 	
-	User fecthUserByUserId(String userId);
+	User fetchUserByUserId(String userId);
+
+	boolean checkUser(String userId);
+	
+	
 
 }

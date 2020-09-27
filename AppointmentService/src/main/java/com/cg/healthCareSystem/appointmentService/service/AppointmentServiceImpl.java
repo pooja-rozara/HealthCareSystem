@@ -49,7 +49,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Override
 	public List<AppointmentDto> fetchAppointmentsByUserId(String userId) {
 		List<Appointment> appointmentList = new ArrayList<Appointment>();
-		String url = "http://User-Service/userExist?Id=" + userId;// create this
+		String url = "http://localhost:8080/check?Id=" + userId;// create this
 		Boolean userExists = restTemplate.getForObject(url, boolean.class); // use restTemplate from user
 		if (!userExists) {
 			throw new NoValueFoundException("No user present with this user Id");
@@ -110,6 +110,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Override
 	public AppointmentDto makeAppointment(AppointmentDto appointmentDto) {
 		Appointment appointment = new Appointment(appointmentDto);
+		
 
 		String diagnosticUrl = "http://Diagnostic-Service/diagnosticCenter?Id=" + appointment.getDiagnosticCenterId();
 		Boolean diagnosticCenterExists = restTemplate.getForObject(diagnosticUrl, boolean.class);

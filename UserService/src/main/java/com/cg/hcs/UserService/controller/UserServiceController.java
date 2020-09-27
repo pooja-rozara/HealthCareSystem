@@ -20,11 +20,16 @@ public class UserServiceController {
 	@GetMapping("/getUser")
 	ResponseEntity<UserDto> fetchUserByUserId(@RequestParam("Id") String userId)
 	{
-		User user=userService.fecthUserByUserId(userId);
-		UserDto userDto=user.convertEntityIntoDto();
-		return new ResponseEntity<>(userDto,HttpStatus.OK);
+		User user=userService.fetchUserByUserId(userId);
+		return new ResponseEntity<>(new UserDto(user),HttpStatus.OK);
+	}
+	@GetMapping("/check")
+	boolean checkUserByUserId(@RequestParam("Id") String userId)
+	{
+		
+		return userService.checkUser(userId);
 	}
 	
-	@Get
+	
 
 }

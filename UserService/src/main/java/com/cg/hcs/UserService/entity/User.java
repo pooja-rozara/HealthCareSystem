@@ -1,6 +1,6 @@
 package com.cg.hcs.UserService.entity;
 
-import java.math.BigInteger;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,84 +10,105 @@ import javax.persistence.Table;
 import com.cg.hcs.UserService.dto.UserDto;
 
 
+
 @Entity
 @Table(name = "users")
 public class User {
-	@Column(name = "user_id")
-	@Id
-	private String userId;
-	@Column(name = "user_password")
-	private String userPassword;
 	@Column(name = "user_name")
+	@Id
 	private String userName;
-	@Column(name = "contact_number")
-	private BigInteger contactNumber;
-	@Column(name = "user_role")
-	private String userRole;
-	@Column(name = "email_id")
-	private String emailId;
-	
+	@Column(name = "name")
+	private String name;
+	@Column(name = "phone_no")
+	private String phoneNo;
+	@Column(name = "role")
+	private String role;
+	@Column(name = "email")
+	private String email;
+	@Column(name="security_question")
+	private String securityQuestion;
+	@Column(name="security_answer")
+	private String securityAnswer;
+
 	public User() {
-		
+
 	}
-	public User(String userId, String userPassword, String userName,
-			BigInteger contactNumber, String userRole, String emailId) {
+	public User(UserDto user) {
+		this.email=user.getEmail();
+		this.name=user.getName();
+		this.phoneNo=user.getPhoneNo();
+		this.role=user.getRole();
+		this.securityAnswer=user.getSecurityAnswer();
+		this.securityQuestion=user.getSecurityQuestion();
+		this.userName=user.getUserName();
+
+	}
+
+	public User(String userName, String name, String phoneNo, String role, String email, String securityQuestion,
+			String securityAnswer) {
 		super();
-		this.userId = userId;
-		this.userPassword = userPassword;
 		this.userName = userName;
-		this.contactNumber = contactNumber;
-		this.userRole = userRole;
-		this.emailId = emailId;
+		this.name = name;
+		this.phoneNo = phoneNo;
+		this.role = role;
+		this.email = email;
+		this.securityQuestion = securityQuestion;
+		this.securityAnswer = securityAnswer;
 	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-	public String getUserPassword() {
-		return userPassword;
-	}
-	public void setUserPassword(String userPassword) {
-		this.userPassword = userPassword;
-	}
+
 	public String getUserName() {
 		return userName;
 	}
+
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	public BigInteger getContactNumber() {
-		return contactNumber;
+
+	public String getName() {
+		return name;
 	}
-	public void setContactNumber(BigInteger contactNumber) {
-		this.contactNumber = contactNumber;
+
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getUserRole() {
-		return userRole;
+
+	public String getPhoneNo() {
+		return phoneNo;
 	}
-	public void setUserRole(String userRole) {
-		this.userRole = userRole;
+
+	public void setPhoneNo(String phoneNo) {
+		this.phoneNo = phoneNo;
 	}
-	public String getEmailId() {
-		return emailId;
+
+	public String getRole() {
+		return role;
 	}
-	public void setEmailId(String emailId) {
-		this.emailId = emailId;
+
+	public void setRole(String role) {
+		this.role = role;
 	}
-	
-	public UserDto convertEntityIntoDto()
-	{
-		UserDto userDto=new UserDto();
-		userDto.setUserId(this.userId);
-		userDto.setContactNumber(this.contactNumber);
-		userDto.setEmailId(this.emailId);
-		userDto.setUserName(this.userName);
-		userDto.setUserRole(this.userRole);
-		userDto.setUserPassword(this.userPassword);
-		
-		return userDto;
+
+	public String getEmail() {
+		return email;
 	}
-	
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getSecurityQuestion() {
+		return securityQuestion;
+	}
+
+	public void setSecurityQuestion(String securityQuestion) {
+		this.securityQuestion = securityQuestion;
+	}
+
+	public String getSecurityAnswer() {
+		return securityAnswer;
+	}
+
+	public void setSecurityAnswer(String securityAnswer) {
+		this.securityAnswer = securityAnswer;
+	}
 }

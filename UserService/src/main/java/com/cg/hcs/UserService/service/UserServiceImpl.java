@@ -15,12 +15,18 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepository;
 
 	@Override
-	public User fecthUserByUserId(String userId) {
+	public User fetchUserByUserId(String userId) {
 		Optional<User> user= userRepository.findById(userId);
 		if(user.isEmpty()) {
 			throw new NoValueFoundException("No User present with the given Id");
 		}
 		return user.get();
+	}
+
+	@Override
+	public boolean checkUser(String userId) {
+		
+		return userRepository.existsById(userId);
 	}
 
 }

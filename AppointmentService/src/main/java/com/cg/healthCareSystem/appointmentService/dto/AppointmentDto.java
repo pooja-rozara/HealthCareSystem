@@ -72,5 +72,10 @@ public class AppointmentDto {
 	public void setDiagnosticCenterId(String diagnosticCenterId) {
 		this.diagnosticCenterId = diagnosticCenterId;
 	}
+	@Override
+	public boolean equals(Object obj) {
+		AppointmentDto appointment=(AppointmentDto) obj;
+		return appointment.getAppointmentId()==this.appointmentId;
+	}
 	
 }

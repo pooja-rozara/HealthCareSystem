@@ -74,9 +74,9 @@ public class AppointmentController {
 	}
 	
 	@PostMapping("/makeAppointment")
-	AppointmentDto makeAppointment(@RequestBody AppointmentDto input)
+	AppointmentDto makeAppointment(@RequestBody AppointmentDto appointmentDto)
 	{
-		return appointmentService.makeAppointment(input);
+		return appointmentService.makeAppointment(appointmentDto);
 	}
 
 	@GetMapping("/check-appointment-by-appointmentId")
