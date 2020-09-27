@@ -25,8 +25,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment,BigInte
 	@Query("Select a.dateTime from Appointment a where a.appointmentId=?1")
 	LocalDateTime fetchDateTimeByAppointmentId(BigInteger appointmentId);
 	
-	@Query("Select a from Appointment a where a.appointmentId=?1 and a.status=0")
+	@Query("Select a from Appointment a where a.diagnosticCenterId=?1 and a.status=0")
 	List<Appointment> checkPendingAppointmentForDiagnosticCenter(String diagnosticCenterId);
+
+	@Query("Select a from Appointment a where a.testCenterId=?1 and a.status=0")
+	List<Appointment> checkPendingAppointmentForTestCenter(String testCenterId);
 
 
 }

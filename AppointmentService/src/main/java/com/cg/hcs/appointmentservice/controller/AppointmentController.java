@@ -23,7 +23,7 @@ import com.cg.hcs.appointmentservice.service.AppointmentService;
 @RequestMapping("/appointments")
 public class AppointmentController {
 	
-	//private static final Logger logger=LoggerFactory.getLogger(AppointmentController.class);
+	
 
 	@Autowired
 	private AppointmentService appointmentService;
@@ -63,7 +63,7 @@ public class AppointmentController {
 	}
 
 	@GetMapping("/availableSlots")
-	List<LocalTime> getAvailableSlots(@RequestBody Map<String,String> input) {
+	public List<LocalTime> getAvailableSlots(@RequestBody Map<String,String> input) {
 			
 		String testId= input.get("test");
 		String dateTime= input.get("dateTime");
@@ -72,24 +72,29 @@ public class AppointmentController {
 	}
 	
 	@PostMapping("/makeAppointment")
-	AppointmentDto makeAppointment(@RequestBody AppointmentDto appointmentDto)
+	public AppointmentDto makeAppointment(@RequestBody AppointmentDto appointmentDto)
 	{
 		return appointmentService.makeAppointment(appointmentDto);
 	}
 
 	@GetMapping("/check-appointment-by-appointmentId")
-	boolean checkAppointmentExists(BigInteger appointmentId)
+	public boolean checkAppointmentExists(BigInteger appointmentId)
 	{
 		return appointmentService.checkAppointmentByAppointmentId(appointmentId);
 	}
 	@GetMapping("/search-appointment-by-appointmentId")
-	AppointmentDto SearchAppointment(BigInteger appointmentId)
+	public AppointmentDto searchAppointment(BigInteger appointmentId)
 	{
 		return appointmentService.searchAppointmentByAppointmentId(appointmentId);
 	}
-	@GetMapping("/pendingAppointment")
-	boolean checkPendingAppointmentsForDiagnosticCenter(@RequestParam("Id") String diagnosticCenterId)
+	@GetMapping("/pendingAppointmentOfDiagnosticCenter")
+	public boolean checkPendingAppointmentsForDiagnosticCenter(@RequestParam("Id") String diagnosticCenterId)
 	{
 		return appointmentService.getPendingAppointmentsForDiagnosticCenter(diagnosticCenterId);
+	}
+	@GetMapping("/pendingAppointmentOfTestCenter")
+	public boolean checkPendingAppointmentsForTestCenter(@RequestParam("Id") String testCenterId)
+	{
+		return appointmentService.getPendingAppointmentsForTestCenter(testCenterId);
 	}
 }

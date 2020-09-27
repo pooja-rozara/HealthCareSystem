@@ -1,4 +1,4 @@
-package com.cg.hcs.appointmentservice.exceptionHandler;
+package com.cg.hcs.appointmentservice.exceptionhandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
 		ApiError error=new ApiError();
 		error.setException(" "+ e.getMessage());
 		HttpStatus status=HttpStatus.BAD_REQUEST;
-		return new ResponseEntity<ApiError>(error, status);
+		return new ResponseEntity<>(error, status);
 	}
 	
 	@ExceptionHandler(value= NotPossibleException.class)
@@ -32,14 +32,14 @@ public class GlobalExceptionHandler {
 		ApiError error=new ApiError();
 		error.setException(" "+ e.getMessage());
 		HttpStatus status=HttpStatus.BAD_REQUEST;
-		return new ResponseEntity<ApiError>(error, status);
+		return new ResponseEntity<>(error, status);
 	}
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public Map<String, String> handleValidationExceptions(
 	  MethodArgumentNotValidException ex) {
 	    Map<String, String> errors = new HashMap<>();
-	    ex.getBindingResult().getAllErrors().forEach((error) -> {
+	    ex.getBindingResult().getAllErrors().forEach(error -> {
 	        String fieldName = ((FieldError) error).getField();
 	        String errorMessage = error.getDefaultMessage();
 	        errors.put(fieldName, errorMessage);

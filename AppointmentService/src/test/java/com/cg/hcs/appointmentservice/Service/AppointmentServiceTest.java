@@ -51,7 +51,7 @@ class AppointmentServiceTest {
 	}
 
 	@Test
-	public void checkAppointmentStatusByAppointmentId() {
+	void checkAppointmentStatusByAppointmentId() {
 
 		String status = appointmentService.checkAppointmentStatus(appointment.getAppointmentId());
 		System.out.println(status);
@@ -59,9 +59,9 @@ class AppointmentServiceTest {
 	}
 
 	@Test
-	public void checkAppointmentStatusByAppointmentIdWhenAppoitmentDoesNotExist() {
+	void checkAppointmentStatusByAppointmentIdWhenAppoitmentDoesNotExist() {
 		assertThrows(NoValueFoundException.class,
-				() -> appointmentService.checkAppointmentStatus(new BigInteger("32434655")));
+				() -> appointmentService.checkAppointmentStatus(BigInteger.valueOf(32434655)));
 	}
 
 //	@Test
@@ -106,19 +106,19 @@ class AppointmentServiceTest {
 //	}
 
 	@Test
-	public void approvingAppointmentWithAppointmentId() {
+	void approvingAppointmentWithAppointmentId() {
 		assertEquals(true, appointmentService.approveAppointment(appointment.getAppointmentId()));
 	}
 
 	@Test
-	public void approvingAppointmentWithInavlidAppointmentId() {
+	void approvingAppointmentWithInavlidAppointmentId() {
 	
 		assertThrows(NoValueFoundException.class,
-				() -> appointmentService.approveAppointment(new BigInteger("345678")));
+				() -> appointmentService.approveAppointment(BigInteger.valueOf(345678)));
 	}
 
 	@Test
-	public void approvingAppointmentWithAppointmentIdWhichIsAlreadyApproved() {
+	void approvingAppointmentWithAppointmentIdWhichIsAlreadyApproved() {
 		appointment.setStatus(1);
 		entityManager.persistAndFlush(appointment);
 		assertThrows(NotPossibleException.class,
@@ -126,7 +126,7 @@ class AppointmentServiceTest {
 	}
 
 	@Test
-	public void approvingAppointmentWithAppointmentIdWhichIsAlreadyCancelled() {
+	void approvingAppointmentWithAppointmentIdWhichIsAlreadyCancelled() {
 		appointment.setStatus(-1);
 		entityManager.persistAndFlush(appointment);
 		assertThrows(NotPossibleException.class,
@@ -134,7 +134,7 @@ class AppointmentServiceTest {
 	}
 
 	@Test
-	public void approvingAppointmentWithAppointmentIdWhoseDateIsAlreadyMissed() {
+	void approvingAppointmentWithAppointmentIdWhoseDateIsAlreadyMissed() {
 		Appointment appointment = new Appointment("123Abc", "123def", LocalDateTime.parse("2020-08-29T12:00:00"), 1,
 				"123ghi");
 		entityManager.persist(appointment);
@@ -144,30 +144,30 @@ class AppointmentServiceTest {
 	}
 
 	@Test
-	public void validatingDate() {
+	void validatingDate() {
 		LocalDateTime dateTime = LocalDateTime.parse("2020-09-29T12:00:00");
 		assertEquals(true, appointmentService.validateDate(dateTime));
 	}
 	@Test
-	public void validatingDateBeforeToday() {
+	void validatingDateBeforeToday() {
 		LocalDateTime dateTime = LocalDateTime.parse("2020-08-29T12:00:00");
 		assertThrows(NotPossibleException.class, () -> appointmentService.validateDate(dateTime));
 	}
 	@Test
-	public void validatingDateAfter30DaysFromToday() {
+	void validatingDateAfter30DaysFromToday() {
 		LocalDateTime dateTime = LocalDateTime.parse("2020-11-29T12:00:00");
 		assertThrows(NotPossibleException.class, () -> appointmentService.validateDate(dateTime));
 	}
 	@Test
-	public void validatingDateOfSunday() {
+	void validatingDateOfSunday() {
 		LocalDateTime dateTime = LocalDateTime.parse("2020-10-04T12:00:00");
 		assertThrows(NotPossibleException.class, () -> appointmentService.validateDate(dateTime));
 	}
-	@Test
-	public void getAvailableSlots() {
+	//@Test
+	//public void getAvailableSlots() {
 //		LocalDateTime dateTime = LocalDateTime.parse("2020-09-29T12:00:00");
 //		String testId="123Abc";
 //		
-	}
+	//}
 
 }

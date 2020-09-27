@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.cg.hcs.appointmentservice.dto.AppointmentDto;
+import com.netflix.servo.util.Objects;
 
 
 @Entity
@@ -95,14 +96,17 @@ public class Appointment {
 	}
 	@Override
 	public boolean equals(Object obj) {
+		if(obj==null||obj.getClass()!=this.getClass())
+			return false;
 		Appointment appointment=(Appointment) obj;
 		return appointment.getAppointmentId()==this.appointmentId;
 	}
 	@Override
 	public int hashCode() {
-		// TODO Auto-generated method stub
-		return super.hashCode();
+		return Objects.hash(appointmentId,diagnosticCenterId,testId);
 	}
+	
+	
 	
 
 }

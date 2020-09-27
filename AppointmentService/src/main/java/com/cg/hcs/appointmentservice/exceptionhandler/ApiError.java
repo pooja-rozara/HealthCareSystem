@@ -1,4 +1,4 @@
-package com.cg.hcs.appointmentservice.exceptionHandler;
+package com.cg.hcs.appointmentservice.exceptionhandler;
 
 
 

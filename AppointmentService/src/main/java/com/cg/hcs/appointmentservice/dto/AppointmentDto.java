@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 import com.cg.hcs.appointmentservice.entity.Appointment;
+import com.netflix.servo.util.Objects;
 
 
 
@@ -28,14 +29,7 @@ public class AppointmentDto {
 		this.diagnosticCenterId=appointment.getDiagnosticCenterId();
 		
 	}
-	public AppointmentDto(String userId, String testId, LocalDateTime dateTime, int status, String diagnosticCenterId) {
-		super();
-		this.userId = userId;
-		this.testId = testId;
-		this.dateTime = dateTime;
-		this.status = status;
-		this.diagnosticCenterId = diagnosticCenterId;
-	}
+	
 	public String getUserId() {
 		return userId;
 	}
@@ -74,8 +68,15 @@ public class AppointmentDto {
 	}
 	@Override
 	public boolean equals(Object obj) {
+		if(obj==null||obj.getClass()!=this.getClass())
+			return false;
 		AppointmentDto appointment=(AppointmentDto) obj;
 		return appointment.getAppointmentId()==this.appointmentId;
 	}
+	@Override
+	public int hashCode() {
+		return Objects.hash(appointmentId,diagnosticCenterId);
+	}
+	
 	
 }
