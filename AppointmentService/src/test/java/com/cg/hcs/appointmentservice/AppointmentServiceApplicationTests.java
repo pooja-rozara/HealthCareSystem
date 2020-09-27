@@ -1,4 +1,4 @@
-package com.cg.healthCareSystem.appointmentService;
+package com.cg.hcs.appointmentservice;
 
 
 import org.springframework.boot.test.context.SpringBootTest;

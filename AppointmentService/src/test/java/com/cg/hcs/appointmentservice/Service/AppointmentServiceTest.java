@@ -1,15 +1,11 @@
-package com.cg.healthCareSystem.appointmentService.Service;
+package com.cg.hcs.appointmentservice.Service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +16,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.cg.hcs.appointmenservice.dto.AppointmentDto;
 import com.cg.hcs.appointmenservice.entity.Appointment;
 import com.cg.hcs.appointmenservice.exception.NoValueFoundException;
 import com.cg.hcs.appointmenservice.exception.NotPossibleException;
