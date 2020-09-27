@@ -1,4 +1,4 @@
-package com.cg.hcs.appointmenservice;
+package com.cg.hcs.appointmentservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

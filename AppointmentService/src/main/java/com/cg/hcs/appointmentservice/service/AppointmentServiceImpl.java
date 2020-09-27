@@ -1,4 +1,4 @@
-package com.cg.hcs.appointmenservice.service;
+package com.cg.hcs.appointmentservice.service;
 
 import java.math.BigInteger;
 import java.time.Duration;
@@ -16,11 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.cg.hcs.appointmenservice.dao.AppointmentRepository;
-import com.cg.hcs.appointmenservice.dto.AppointmentDto;
-import com.cg.hcs.appointmenservice.entity.Appointment;
-import com.cg.hcs.appointmenservice.exception.NoValueFoundException;
-import com.cg.hcs.appointmenservice.exception.NotPossibleException;
+import com.cg.hcs.appointmentservice.dao.AppointmentRepository;
+import com.cg.hcs.appointmentservice.dto.AppointmentDto;
+import com.cg.hcs.appointmentservice.entity.Appointment;
+import com.cg.hcs.appointmentservice.exception.NoValueFoundException;
+import com.cg.hcs.appointmentservice.exception.NotPossibleException;
 
 
 @Service

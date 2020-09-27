@@ -1,4 +1,4 @@
-package com.cg.hcs.appointmenservice.dao;
+package com.cg.hcs.appointmentservice.dao;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.cg.hcs.appointmenservice.entity.Appointment;
+import com.cg.hcs.appointmentservice.entity.Appointment;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment,BigInteger > {

@@ -1,11 +1,11 @@
-package com.cg.hcs.appointmenservice.service;
+package com.cg.hcs.appointmentservice.service;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import com.cg.hcs.appointmenservice.dto.AppointmentDto;
+import com.cg.hcs.appointmentservice.dto.AppointmentDto;
 
 public interface AppointmentService {
 

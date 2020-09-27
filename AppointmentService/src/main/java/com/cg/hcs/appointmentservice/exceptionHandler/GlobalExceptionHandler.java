@@ -1,4 +1,4 @@
-package com.cg.hcs.appointmenservice.exceptionHandler;
+package com.cg.hcs.appointmentservice.exceptionHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.cg.hcs.appointmenservice.exception.NoValueFoundException;
-import com.cg.hcs.appointmenservice.exception.NotPossibleException;
+import com.cg.hcs.appointmentservice.exception.NoValueFoundException;
+import com.cg.hcs.appointmentservice.exception.NotPossibleException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {

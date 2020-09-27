@@ -1,4 +1,4 @@
-package com.cg.hcs.appointmenservice.exception;
+package com.cg.hcs.appointmentservice.exception;
 
 public class NotPossibleException extends RuntimeException {
 

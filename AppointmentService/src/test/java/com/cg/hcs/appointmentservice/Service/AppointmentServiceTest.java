@@ -16,11 +16,11 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.cg.hcs.appointmenservice.entity.Appointment;
-import com.cg.hcs.appointmenservice.exception.NoValueFoundException;
-import com.cg.hcs.appointmenservice.exception.NotPossibleException;
-import com.cg.hcs.appointmenservice.service.AppointmentService;
-import com.cg.hcs.appointmenservice.service.AppointmentServiceImpl;
+import com.cg.hcs.appointmentservice.entity.Appointment;
+import com.cg.hcs.appointmentservice.exception.NoValueFoundException;
+import com.cg.hcs.appointmentservice.exception.NotPossibleException;
+import com.cg.hcs.appointmentservice.service.AppointmentService;
+import com.cg.hcs.appointmentservice.service.AppointmentServiceImpl;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
@@ -165,9 +165,9 @@ class AppointmentServiceTest {
 	}
 	@Test
 	public void getAvailableSlots() {
-		LocalDateTime dateTime = LocalDateTime.parse("2020-09-29T12:00:00");
-		String testId="123Abc";
-		
+//		LocalDateTime dateTime = LocalDateTime.parse("2020-09-29T12:00:00");
+//		String testId="123Abc";
+//		
 	}
 
 }

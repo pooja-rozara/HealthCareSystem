@@ -1,9 +1,9 @@
-package com.cg.hcs.appointmenservice.dto;
+package com.cg.hcs.appointmentservice.dto;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 
-import com.cg.hcs.appointmenservice.entity.Appointment;
+import com.cg.hcs.appointmentservice.entity.Appointment;
 
 
 
