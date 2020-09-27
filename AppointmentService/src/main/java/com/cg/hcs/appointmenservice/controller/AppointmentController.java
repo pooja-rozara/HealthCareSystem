@@ -1,4 +1,4 @@
-package com.cg.healthCareSystem.appointmentService.controller;
+package com.cg.hcs.appointmenservice.controller;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cg.healthCareSystem.appointmentService.dto.AppointmentDto;
-import com.cg.healthCareSystem.appointmentService.service.AppointmentService;
+import com.cg.hcs.appointmenservice.dto.AppointmentDto;
+import com.cg.hcs.appointmenservice.service.AppointmentService;
 
 
 @RestController

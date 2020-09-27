@@ -1,12 +1,12 @@
-package com.cg.healthCareSystem.appointmentService.service;
+package com.cg.hcs.appointmenservice.service;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import com.cg.healthCareSystem.appointmentService.dto.AppointmentDto;
-import com.cg.healthCareSystem.appointmentService.entity.Appointment;
+import com.cg.hcs.appointmenservice.dto.AppointmentDto;
+import com.cg.hcs.appointmenservice.entity.Appointment;
 
 public interface AppointmentService {
 

@@ -1,4 +1,4 @@
-package com.cg.healthCareSystem.appointmentService.exceptionHandler;
+package com.cg.hcs.appointmenservice.exceptionHandler;
 
 
 

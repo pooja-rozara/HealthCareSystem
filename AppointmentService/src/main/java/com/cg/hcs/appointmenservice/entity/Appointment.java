@@ -1,4 +1,4 @@
-package com.cg.healthCareSystem.appointmentService.entity;
+package com.cg.hcs.appointmenservice.entity;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.cg.healthCareSystem.appointmentService.dto.AppointmentDto;
+import com.cg.hcs.appointmenservice.dto.AppointmentDto;
 
 
 @Entity
@@ -97,6 +97,11 @@ public class Appointment {
 	public boolean equals(Object obj) {
 		Appointment appointment=(Appointment) obj;
 		return appointment.getAppointmentId()==this.appointmentId;
+	}
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
 	}
 	
 

@@ -1,4 +1,4 @@
-package com.cg.healthCareSystem.appointmentService.exception;
+package com.cg.hcs.appointmenservice.exception;
 
 public class NoValueFoundException extends RuntimeException {
 

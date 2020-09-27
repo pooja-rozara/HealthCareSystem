@@ -1,4 +1,4 @@
-package com.cg.healthCareSystem.appointmentService.service;
+package com.cg.hcs.appointmenservice.service;
 
 import java.math.BigInteger;
 import java.time.Duration;
@@ -16,13 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.cg.healthCareSystem.appointmentService.dao.AppointmentRepository;
-import com.cg.healthCareSystem.appointmentService.dto.AppointmentDto;
-import com.cg.healthCareSystem.appointmentService.entity.Appointment;
-import com.cg.healthCareSystem.appointmentService.exception.NoValueFoundException;
-import com.cg.healthCareSystem.appointmentService.exception.NotPossibleException;
+import com.cg.hcs.appointmenservice.dao.AppointmentRepository;
+import com.cg.hcs.appointmenservice.dto.AppointmentDto;
+import com.cg.hcs.appointmenservice.entity.Appointment;
+import com.cg.hcs.appointmenservice.exception.NoValueFoundException;
+import com.cg.hcs.appointmenservice.exception.NotPossibleException;
 
-import javassist.NotFoundException;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
@@ -229,12 +228,20 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Override
 	public boolean checkAppointmentByAppointmentId(BigInteger appointmentId) {
+		Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
+		if (appointment.isEmpty()) {
+			throw new NoValueFoundException("No appointment present with this appointment Id");
+		}
 
 		return appointmentRepository.existsById(appointmentId);
 	}
 
 	@Override
 	public AppointmentDto searchAppointmentByAppointmentId(BigInteger appointmentId) {
+		Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
+		if (appointment.isEmpty()) {
+			throw new NoValueFoundException("No appointment present with this appointment Id");
+		}
 
 		return new AppointmentDto(appointmentRepository.findById(appointmentId).get());
 	}

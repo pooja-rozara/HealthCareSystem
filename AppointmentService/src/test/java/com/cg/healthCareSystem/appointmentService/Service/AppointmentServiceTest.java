@@ -20,12 +20,12 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.cg.healthCareSystem.appointmentService.dto.AppointmentDto;
-import com.cg.healthCareSystem.appointmentService.entity.Appointment;
-import com.cg.healthCareSystem.appointmentService.exception.NoValueFoundException;
-import com.cg.healthCareSystem.appointmentService.exception.NotPossibleException;
-import com.cg.healthCareSystem.appointmentService.service.AppointmentService;
-import com.cg.healthCareSystem.appointmentService.service.AppointmentServiceImpl;
+import com.cg.hcs.appointmenservice.dto.AppointmentDto;
+import com.cg.hcs.appointmenservice.entity.Appointment;
+import com.cg.hcs.appointmenservice.exception.NoValueFoundException;
+import com.cg.hcs.appointmenservice.exception.NotPossibleException;
+import com.cg.hcs.appointmenservice.service.AppointmentService;
+import com.cg.hcs.appointmenservice.service.AppointmentServiceImpl;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
