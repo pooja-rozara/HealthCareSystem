@@ -18,13 +18,13 @@ public class UserServiceController {
 	private UserService userService;
 	
 	@GetMapping("/getUser")
-	ResponseEntity<UserDto> fetchUserByUserId(@RequestParam("Id") String userId)
+	public ResponseEntity<UserDto> fetchUserByUserId(@RequestParam("Id") String userId)
 	{
 		User user=userService.fetchUserByUserId(userId);
 		return new ResponseEntity<>(new UserDto(user),HttpStatus.OK);
 	}
 	@GetMapping("/check")
-	boolean checkUserByUserId(@RequestParam("Id") String userId)
+	public boolean checkUserByUserId(@RequestParam("Id") String userId)
 	{
 		
 		return userService.checkUser(userId);
