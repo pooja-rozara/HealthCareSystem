@@ -6,7 +6,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 import com.cg.hcs.appointmenservice.dto.AppointmentDto;
-import com.cg.hcs.appointmenservice.entity.Appointment;
 
 public interface AppointmentService {
 
