@@ -29,4 +29,6 @@ public interface AppointmentService {
 	boolean checkAppointmentByAppointmentId(BigInteger appointmentId);
 
 	AppointmentDto searchAppointmentByAppointmentId(BigInteger appointmentId);
+
+	boolean getPendingAppointmentsForDiagnosticCenter(String diagnosticCenterId);
 }

@@ -9,10 +9,10 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class SpringSecurityDemo1Application {
+public class AppointmentServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringSecurityDemo1Application.class, args);
+		SpringApplication.run(AppointmentServiceApplication.class, args);
 	}
 	
 	@LoadBalanced

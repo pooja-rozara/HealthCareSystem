@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,97 +30,149 @@ import com.cg.healthCareSystem.appointmentService.service.AppointmentServiceImpl
 @DataJpaTest
 @RunWith(SpringRunner.class)
 class AppointmentServiceTest {
-	
+
 	@Autowired
 	private TestEntityManager entityManager;
-	
+
 	@Autowired
 	private AppointmentService appointmentService;
-	
+
+	Appointment appointment;
+
 	@TestConfiguration
-	static class AppointmentServiceImplTestContextConfiguration{
-		
+	static class AppointmentServiceImplTestContextConfiguration {
+
 		@Bean
-		public AppointmentService appointmentService()
-		{
+		public AppointmentService appointmentService() {
 			return new AppointmentServiceImpl();
 		}
 	}
-	
-	@Test
-	public void fetchingStatusByAppointmentId()
-	{
-		Appointment appointment=new Appointment("123Abc","123def",LocalDateTime.parse("2020-09-29T12:00:00"),0,"123ghi");
+
+	@BeforeEach
+	public void configure() {
+		appointment = new Appointment("123Abc", "123def", LocalDateTime.parse("2020-09-29T12:00:00"), 0, "123ghi");
 		entityManager.persist(appointment);
 		entityManager.flush();
-		String status=appointmentService.checkAppointmentStatus(appointment.getAppointmentId());
+	}
+
+	@Test
+	public void checkAppointmentStatusByAppointmentId() {
+
+		String status = appointmentService.checkAppointmentStatus(appointment.getAppointmentId());
 		System.out.println(status);
 		assertEquals("Pending", status);
 	}
+
 	@Test
-	public void fetchingStatusByAppointmentIdWhenAppoitmentDoesNotExist()
-	{
-		Appointment appointment=new Appointment("123Abc","123def",LocalDateTime.parse("2020-09-29T12:00:00"),0,"123ghi");
+	public void checkAppointmentStatusByAppointmentIdWhenAppoitmentDoesNotExist() {
+		assertThrows(NoValueFoundException.class,
+				() -> appointmentService.checkAppointmentStatus(new BigInteger("32434655")));
+	}
+
+//	@Test
+//	public void fetchingApppointmentByUserId() {
+//		List<Appointment> testingAppointments = new ArrayList<Appointment>();
+//		testingAppointments.add(appointment);
+//		assertEquals(testingAppointments.stream().map(a -> new AppointmentDto(a)).collect(Collectors.toList()),
+//				 appointmentService.fetchAppointmentsByUserId(appointment.getUserId()));
+//	}
+//
+//	@Test
+//	public void fetchingApppointmentByUserIdWhenUserDoesNotExist() {
+//		assertThrows(NoValueFoundException.class,
+//				() -> appointmentService.fetchAppointmentsByUserId(appointment.getUserId()));
+//	}
+
+//	@Test
+//	public void fetchingApppointmentByUserIdWhenAppointmentDoesNotExist() {
+//		// input value which have uiserId but no appointment with that
+//		assertThrows(NoValueFoundException.class, () -> appointmentService.fetchAppointmentsByUserId("123wed"));
+//	}
+
+//	@Test
+//	public void fetchingApppointmentByDiagnosticCenterId() {
+//		
+//		List<Appointment> testingAppointments = new ArrayList<Appointment>();
+//		testingAppointments.add(appointment);
+//		assertEquals(testingAppointments.stream().map(a -> new AppointmentDto(a)).collect(Collectors.toList()),
+//				appointmentService.fetchAppointmentsByUserId(appointment.getDiagnosticCenterId()));
+//	}
+//
+//	@Test
+//	public void fetchingApppointmentByDiagnosticCenterIdWhenDiagnosticCenterDoesNotExist() {
+//		assertThrows(NoValueFoundException.class,
+//				() -> appointmentService.fetchAppointmentsByUserId(appointment.getDiagnosticCenterId()));
+//	}
+//
+//	@Test
+//	public void fetchingApppointmentByDiagnosticCenterIdWhenAppointmentDoesNotExist() {
+//		// enter correct value of diagnostic center with no appointment
+//		assertThrows(NoValueFoundException.class, () -> appointmentService.fetchAppointmentsByUserId("dsgvf"));
+//	}
+
+	@Test
+	public void approvingAppointmentWithAppointmentId() {
+		assertEquals(true, appointmentService.approveAppointment(appointment.getAppointmentId()));
+	}
+
+	@Test
+	public void approvingAppointmentWithInavlidAppointmentId() {
+	
+		assertThrows(NoValueFoundException.class,
+				() -> appointmentService.approveAppointment(new BigInteger("345678")));
+	}
+
+	@Test
+	public void approvingAppointmentWithAppointmentIdWhichIsAlreadyApproved() {
+		appointment.setStatus(1);
+		entityManager.persistAndFlush(appointment);
+		assertThrows(NotPossibleException.class,
+				() -> appointmentService.approveAppointment(appointment.getAppointmentId()));
+	}
+
+	@Test
+	public void approvingAppointmentWithAppointmentIdWhichIsAlreadyCancelled() {
+		appointment.setStatus(-1);
+		entityManager.persistAndFlush(appointment);
+		assertThrows(NotPossibleException.class,
+				() -> appointmentService.approveAppointment(appointment.getAppointmentId()));
+	}
+
+	@Test
+	public void approvingAppointmentWithAppointmentIdWhoseDateIsAlreadyMissed() {
+		Appointment appointment = new Appointment("123Abc", "123def", LocalDateTime.parse("2020-08-29T12:00:00"), 1,
+				"123ghi");
 		entityManager.persist(appointment);
 		entityManager.flush();
-		assertThrows(NoValueFoundException.class,()-> appointmentService.checkAppointmentStatus(new BigInteger("32434655")));
+		assertThrows(NotPossibleException.class,
+				() -> appointmentService.approveAppointment(appointment.getAppointmentId()));
+	}
+
+	@Test
+	public void validatingDate() {
+		LocalDateTime dateTime = LocalDateTime.parse("2020-09-29T12:00:00");
+		assertEquals(true, appointmentService.validateDate(dateTime));
 	}
 	@Test
-	public void fetchingApppointmentByUserId()
-	{
-		Appointment appointment=new Appointment("123Abc","123def",LocalDateTime.parse("2020-09-29T12:00:00"),0,"123ghi");
-		entityManager.persist(appointment);
-		entityManager.flush();
-		Appointment secondAppointment=new Appointment("123Abc","123dTf",LocalDateTime.parse("2020-09-29T12:00:00"),0,"125ghi");
-		entityManager.persist(secondAppointment);
-		entityManager.flush();
-		List<AppointmentDto> appointments=appointmentService.fetchAppointmentsByUserId(appointment.getUserId());
-		List<Appointment> testingAppointments=new ArrayList<Appointment>();
-		testingAppointments.add(appointment);
-		testingAppointments.add(secondAppointment);
-		assertEquals(testingAppointments.stream().map(a->new AppointmentDto(a)).collect(Collectors.toList()), appointments);
+	public void validatingDateBeforeToday() {
+		LocalDateTime dateTime = LocalDateTime.parse("2020-08-29T12:00:00");
+		assertThrows(NotPossibleException.class, () -> appointmentService.validateDate(dateTime));
 	}
 	@Test
-	public void fetchingApppointmentByUserIdWhenUserDoesNotExist()
-	{
-		Appointment appointment=new Appointment("123Abc","123def",LocalDateTime.parse("2020-09-29T12:00:00"),0,"123ghi");
-		entityManager.persist(appointment);
-		entityManager.flush();
-		assertThrows(NoValueFoundException.class,()-> appointmentService.fetchAppointmentsByUserId(appointment.getUserId()));
+	public void validatingDateAfter30DaysFromToday() {
+		LocalDateTime dateTime = LocalDateTime.parse("2020-11-29T12:00:00");
+		assertThrows(NotPossibleException.class, () -> appointmentService.validateDate(dateTime));
 	}
 	@Test
-	public void fetchingApppointmentByDiagnosticCenterId()
-	{
-		Appointment appointment=new Appointment("123Abc","123def",LocalDateTime.parse("2020-09-29T12:00:00"),0,"123ghi");
-		entityManager.persist(appointment);
-		entityManager.flush();
-		Appointment secondAppointment=new Appointment("123Abc","123dTf",LocalDateTime.parse("2020-09-29T12:00:00"),0,"125ghi");
-		entityManager.persist(secondAppointment);
-		entityManager.flush();
-		List<AppointmentDto> appointments=appointmentService.fetchAppointmentsByUserId(appointment.getDiagnosticCenterId());
-		List<Appointment> testingAppointments=new ArrayList<Appointment>();
-		testingAppointments.add(appointment);
-		testingAppointments.add(secondAppointment);
-		assertEquals(testingAppointments.stream().map(a->new AppointmentDto(a)).collect(Collectors.toList()), appointments);
+	public void validatingDateOfSunday() {
+		LocalDateTime dateTime = LocalDateTime.parse("2020-10-04T12:00:00");
+		assertThrows(NotPossibleException.class, () -> appointmentService.validateDate(dateTime));
 	}
 	@Test
-	public void fetchingApppointmentByDiagnosticCenterIdWhenDiagnosticCenterDoesNotExist()
-	{
-		Appointment appointment=new Appointment("123Abc","123def",LocalDateTime.parse("2020-09-29T12:00:00"),0,"123ghi");
-		entityManager.persist(appointment);
-		entityManager.flush();
-		assertThrows(NoValueFoundException.class,()-> appointmentService.fetchAppointmentsByUserId(appointment.getDiagnosticCenterId()));
-	}
-	@Test
-	public void fetchingDateTimeByAppointmentId()
-	{
-		Appointment appointment=new Appointment("123Abc","123def",LocalDateTime.parse("2020-09-29T12:00:00"),0,"123ghi");
-		entityManager.persist(appointment);
-		entityManager.flush();
-		boolean appointments=appointmentService.validateDate(appointment.getDateTime());
+	public void getAvailableSlots() {
+		LocalDateTime dateTime = LocalDateTime.parse("2020-09-29T12:00:00");
+		String testId="123Abc";
 		
-		assertEquals(true,appointments);
 	}
-		
 
 }

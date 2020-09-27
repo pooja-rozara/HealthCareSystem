@@ -22,6 +22,8 @@ import com.cg.healthCareSystem.appointmentService.entity.Appointment;
 import com.cg.healthCareSystem.appointmentService.exception.NoValueFoundException;
 import com.cg.healthCareSystem.appointmentService.exception.NotPossibleException;
 
+import javassist.NotFoundException;
+
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
 
@@ -87,7 +89,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		}
 		int statusValue = appointmentRepository.fetchStatusByAppointmentId(appointmentId);
 		LocalDateTime dateTime = appointmentRepository.fetchDateTimeByAppointmentId(appointmentId);
-		if (statusValue != -1) {
+		if (statusValue != -1 && statusValue != 1) {
 			if (dateTime.toLocalDate().equals(LocalDate.now())
 					&& Duration.between(dateTime.toLocalTime(), LocalDateTime.now().toLocalTime()).toMinutes() >= 30
 					&& dateTime.toLocalTime().isAfter(LocalTime.now())) {
@@ -110,7 +112,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Override
 	public AppointmentDto makeAppointment(AppointmentDto appointmentDto) {
 		Appointment appointment = new Appointment(appointmentDto);
-		
+
+		appointment.setAppointmentId(null);
+		appointment.setStatus(0);
 
 		String diagnosticUrl = "http://Diagnostic-Service/diagnosticCenter?Id=" + appointment.getDiagnosticCenterId();
 		Boolean diagnosticCenterExists = restTemplate.getForObject(diagnosticUrl, boolean.class);
@@ -144,7 +148,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Override
 	public boolean validateDate(LocalDateTime dateTime) {
 		if (dateTime.toLocalDate().isEqual(LocalDate.now())
-				|| !dateTime.toLocalDate().isBefore(LocalDate.now().plusDays(30))) {
+				|| !dateTime.toLocalDate().isBefore(LocalDate.now().plusDays(30))
+				|| dateTime.toLocalDate().isBefore(LocalDate.now())) {
 			throw new NotPossibleException("Please select date of today or any day within 30 days of today.");
 		} else if (dateTime.toLocalDate().getDayOfWeek().toString().equalsIgnoreCase("SUNDAY")) {
 			throw new NotPossibleException("we are closed on Sunday!");
@@ -230,8 +235,28 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Override
 	public AppointmentDto searchAppointmentByAppointmentId(BigInteger appointmentId) {
-		
+
 		return new AppointmentDto(appointmentRepository.findById(appointmentId).get());
+	}
+
+	@Override
+	public boolean getPendingAppointmentsForDiagnosticCenter(String diagnosticCenterId) {
+
+		String diagnosticUrl = "http://Diagnostic-Service/diagnosticCenter?Id=" + diagnosticCenterId;
+		Boolean diagnosticCenterExists = restTemplate.getForObject(diagnosticUrl, boolean.class);
+		if (!diagnosticCenterExists) {
+			throw new NoValueFoundException("No Diagnostic Center present with this Center Id");
+		}
+		
+		List<Appointment> appointments=appointmentRepository.checkPendingAppointmentForDiagnosticCenter(diagnosticCenterId);
+		if(appointments.isEmpty())
+		{
+			return false;
+		}
+		else
+			return true;
+			
+
 	}
 
 }

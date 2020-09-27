@@ -89,4 +89,9 @@ public class AppointmentController {
 	{
 		return appointmentService.searchAppointmentByAppointmentId(appointmentId);
 	}
+	@GetMapping("/pendingAppointment")
+	boolean checkPendingAppointmentsForDiagnosticCenter(@RequestParam("Id") String diagnosticCenterId)
+	{
+		return appointmentService.getPendingAppointmentsForDiagnosticCenter(diagnosticCenterId);
+	}
 }
