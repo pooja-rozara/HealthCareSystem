@@ -1,6 +1,6 @@
 ## Spring REST
 server:
-    port: 8090 
+    port: 8082
 
 #Eureka
 eureka:
