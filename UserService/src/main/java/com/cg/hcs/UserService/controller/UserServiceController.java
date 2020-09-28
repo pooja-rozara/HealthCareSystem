@@ -26,7 +26,6 @@ public class UserServiceController {
 	@GetMapping("/check")
 	public boolean checkUserByUserId(@RequestParam("Id") String userId)
 	{
-		
 		return userService.checkUser(userId);
 	}
 	

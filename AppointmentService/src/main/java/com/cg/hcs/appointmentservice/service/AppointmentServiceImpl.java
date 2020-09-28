@@ -36,12 +36,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 	private static final Logger logger = LoggerFactory.getLogger(AppointmentServiceImpl.class);
 
 	String appointmentNotPresent = "No appointment present with this appointment Id";
+	String diagnosticCenterNotPresent = "No diagnostic center present with this diagnostic center Id";
+	String userNotPresent = "No user present with this user Id";
 
 	@Override
 	public String checkAppointmentStatus(BigInteger appointmentId) {
 		Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
 		if (appointment.isEmpty()) {
-			logger.error("check appointment status failed, no appointmentId");
+			logger.warn("check appointment status failed, no appointmentId");
 			throw new NoValueFoundException(appointmentNotPresent);
 		}
 		String status = "Pending";
@@ -59,11 +61,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 		String url = "http://localhost:8080/check?Id=" + userId;
 		Boolean userExists = restTemplate.getForObject(url, boolean.class); 
 		if (Boolean.FALSE.equals(userExists)) {
-			throw new NoValueFoundException("No user present with this user Id");
+			logger.warn(userNotPresent);
+			throw new NoValueFoundException(userNotPresent);
 		}
 		try {
 			appointmentList = appointmentRepository.fetchAppointmentsByUserId(userId);
 		} catch (NoSuchElementException e) {
+			logger.warn("No appointment made for this user ");
 			throw new NoValueFoundException("You Haven't made any appointment yet");
 		}
 		return appointmentList.stream().map(a -> new AppointmentDto(a)).collect(Collectors.toList());
@@ -76,12 +80,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 		String url = "http://diagnostic-center-service/diagnosticcenters/?Id=" + diagnosticCenterId;// change
 		Boolean diagnosticCenterExists = restTemplate.getForObject(url, boolean.class);
 		if (Boolean.FALSE.equals(diagnosticCenterExists)) {
-			throw new NoValueFoundException("No Diagnostic Center present with this Center Id");
+			logger.warn(diagnosticCenterNotPresent);
+			throw new NoValueFoundException(diagnosticCenterNotPresent);
 		}
 		try {
 			appointmentList = appointmentRepository.fetchAppointmentsByDiagnosticCenterId(diagnosticCenterId);
 		} catch (NoSuchElementException e) {
-			throw new NoValueFoundException("You Haven't made any appointment yet");
+			logger.warn("user has not made any appointment yet!");
+			throw new NoValueFoundException("You Haven't made any appointment yet!");
 		}
 		return appointmentList.stream().map(a -> new AppointmentDto(a)).collect(Collectors.toList());
 	}
@@ -90,6 +96,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public boolean approveAppointment(BigInteger appointmentId) {
 		Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
 		if (appointment.isEmpty()) {
+			logger.warn(appointmentNotPresent);
 			throw new NoValueFoundException(appointmentNotPresent);
 		}
 		int statusValue = appointmentRepository.fetchStatusByAppointmentId(appointmentId);
@@ -100,12 +107,19 @@ public class AppointmentServiceImpl implements AppointmentService {
 					&& dateTime.toLocalTime().isAfter(LocalTime.now())||dateTime.isAfter(LocalDateTime.now()) && !dateTime.toLocalDate().equals(LocalDate.now()))) {
 				appointment.get().setStatus(1);
 				appointmentRepository.save(appointment.get());
-			} else
+			} 
+			else {
+				logger.warn("Appointment date is missed");
 				throw new NotPossibleException("Appointment date and time is already missed!!");
-		} else if (statusValue == 1) {
+			}
+				
+		} 
+		else if (statusValue == 1) {
+			logger.warn("already approved appointment");
 			throw new NotPossibleException("Appointment is already approved");
-		} else {
-
+		} 
+		else {
+			logger.warn("Already cancelled appointment");
 			throw new NotPossibleException("Appointment is already cancelled");
 		}
 		return true;
@@ -121,18 +135,21 @@ public class AppointmentServiceImpl implements AppointmentService {
 		String diagnosticUrl = "http://Diagnostic-Service/diagnosticCenter?Id=" + appointment.getDiagnosticCenterId();
 		Boolean diagnosticCenterExists = restTemplate.getForObject(diagnosticUrl, boolean.class);
 		if (Boolean.FALSE.equals(diagnosticCenterExists)) {
-			throw new NoValueFoundException("No Diagnostic Center present with this Center Id");
+			logger.warn(diagnosticCenterNotPresent);
+			throw new NoValueFoundException(diagnosticCenterNotPresent);
 		}
 
 		String userUrl = "http://User-Service/userExist?Id=" + appointment.getUserId();// create this
 		Boolean userExists = restTemplate.getForObject(userUrl, boolean.class); // use restTemplate from user
 		if (Boolean.FALSE.equals(userExists)) {
-			throw new NoValueFoundException("No user present with this user Id");
+			logger.warn(userNotPresent);
+			throw new NoValueFoundException(userNotPresent);
 		}
 
 		String testUrl = "http://Test-Service/TestCenter?Id=" + appointment.getDiagnosticCenterId();
 		Boolean testCenterExists = restTemplate.getForObject(testUrl, boolean.class);
 		if (Boolean.FALSE.equals(testCenterExists)) {
+			logger.warn("Test Center doesn't exist");
 			throw new NoValueFoundException("No Test Center present with this Center Id");
 		}
 
@@ -140,9 +157,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 			List<LocalTime> allSlots = getAvailableSlots(appointment.getTestId(), appointment.getDateTime());
 			if (allSlots.contains(appointment.getDateTime().toLocalTime())) {
 				appointment = appointmentRepository.save(appointment);
-			} else
-				throw new NotPossibleException("sorry we can't book you appointment");
-
+			} else {
+				throw new NotPossibleException("sorry we can't book your appointment");
+			}
 		}
 		return new AppointmentDto(appointment);
 	}
@@ -152,8 +169,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 		if (dateTime.toLocalDate().isEqual(LocalDate.now())
 				|| !dateTime.toLocalDate().isBefore(LocalDate.now().plusDays(30))
 				|| dateTime.toLocalDate().isBefore(LocalDate.now())) {
+			logger.warn("Invalid date");
 			throw new NotPossibleException("Please select date of today or any day within 30 days of today.");
 		} else if (dateTime.toLocalDate().getDayOfWeek().toString().equalsIgnoreCase("SUNDAY")) {
+			logger.warn("date is of sunday");
 			throw new NotPossibleException("we are closed on Sunday!");
 		}
 
@@ -217,6 +236,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public String cancelAppointment(BigInteger appointmentId) {
 		Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
 		if (appointment.isEmpty()) {
+			logger.warn(appointmentNotPresent);
 			throw new NoValueFoundException(appointmentNotPresent);
 		}
 		appointment.get().setStatus(-1);
@@ -233,6 +253,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public boolean checkAppointmentByAppointmentId(BigInteger appointmentId) {
 		Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
 		if (appointment.isEmpty()) {
+			logger.warn(appointmentNotPresent);
 			throw new NoValueFoundException(appointmentNotPresent);
 		}
 
@@ -243,6 +264,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	public AppointmentDto searchAppointmentByAppointmentId(BigInteger appointmentId) {
 		Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
 		if (appointment.isEmpty()) {
+			logger.warn(appointmentNotPresent);
 			throw new NoValueFoundException(appointmentNotPresent);
 		}
 
@@ -255,7 +277,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 		String diagnosticUrl = "http://Diagnostic-Service/diagnosticCenter?Id=" + diagnosticCenterId;
 		Boolean diagnosticCenterExists = restTemplate.getForObject(diagnosticUrl, boolean.class);
 		if (Boolean.FALSE.equals(diagnosticCenterExists)) {
-			throw new NoValueFoundException("No Diagnostic Center present with this Center Id");
+			logger.warn(diagnosticCenterNotPresent);
+			throw new NoValueFoundException(diagnosticCenterNotPresent);
 		}
 
 		List<Appointment> appointments = appointmentRepository
@@ -270,6 +293,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		String testUrl = "http://test-center-Service/diagnosticCenter?Id=" + testCenterId;//change url based on test service
 		Boolean testCenterExists = restTemplate.getForObject(testUrl, boolean.class);
 		if (Boolean.FALSE.equals(testCenterExists)) {
+			logger.warn("Test center doesn't exist with this Id");
 			throw new NoValueFoundException("No Test Center present with this Center Id");
 		}
 
